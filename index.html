@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Lot Watch — Parking Patrol Log</title>
+<meta name="theme-color" content="#1c1e22">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Lot Watch">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+  :root {
+    --asphalt: #1c1e22;
+    --asphalt-2: #26292e;
+    --line-white: #eef0ec;
+    --paper: #f6f4ee;
+    --amber: #e8a33d;
+    --amber-deep: #c97f1a;
+    --red-notice: #c0432f;
+    --green-ok: #4f8a5b;
+    --blue-note: #4c86b0;
+    --muted: #8b8f96;
+    --mono: 'Courier New', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --display: 'Arial Narrow', 'Helvetica Neue', Arial, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--asphalt);
+    background-image: repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 3px);
+    color: var(--line-white);
+    font-family: var(--body);
+    min-height: 100vh;
+    padding: 24px 16px 60px;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; }
+
+  header.masthead {
+    display: flex; align-items: baseline; justify-content: space-between;
+    border-bottom: 3px dashed var(--amber);
+    padding-bottom: 14px; margin-bottom: 22px; flex-wrap: wrap; gap: 8px;
+  }
+  header.masthead h1 { font-family: var(--display); font-weight: 800; letter-spacing: 0.5px; font-size: 30px; margin: 0; text-transform: uppercase; }
+  header.masthead h1 span { color: var(--amber); }
+  header.masthead .tagline { font-family: var(--mono); font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+
+  nav.tabs { display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; }
+  nav.tabs button {
+    background: var(--asphalt-2); color: var(--muted); border: 1px solid #34383f;
+    font-family: var(--display); text-transform: uppercase; letter-spacing: 0.8px; font-size: 12px;
+    padding: 9px 14px; border-radius: 3px; cursor: pointer;
+  }
+  nav.tabs button.active { background: var(--amber); color: #1c1e22; border-color: var(--amber); font-weight: 700; }
+
+  .view { display: none; }
+  .view.active { display: block; }
+
+  .panel { background: var(--asphalt-2); border: 1px solid #34383f; border-radius: 4px; padding: 18px 20px; margin-bottom: 20px; }
+  .panel h2 { font-family: var(--display); text-transform: uppercase; font-size: 14px; letter-spacing: 1.5px; color: var(--amber); margin: 0 0 4px 0; }
+  .panel .sub { font-size: 12px; color: var(--muted); margin: 0 0 14px 0; }
+
+  label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px; }
+  input[type="date"], input[type="text"], textarea {
+    width: 100%; background: #14161a; border: 1px solid #3a3f47; color: var(--line-white);
+    border-radius: 3px; padding: 10px 12px; font-family: var(--mono); font-size: 14px;
+  }
+  textarea { min-height: 110px; resize: vertical; line-height: 1.6; text-transform: uppercase; }
+  input[type="date"] { max-width: 220px; }
+  .field { margin-bottom: 14px; }
+  .hint { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .row .field { flex: 1; min-width: 150px; }
+
+  button.action {
+    font-family: var(--display); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; font-size: 13px;
+    border: none; border-radius: 3px; padding: 12px 20px; cursor: pointer; transition: filter 0.15s ease;
+  }
+  button.action:active { transform: translateY(1px); }
+  .btn-primary { background: var(--amber); color: #1c1e22; }
+  .btn-primary:hover { filter: brightness(1.08); }
+  .btn-blue { background: var(--blue-note); color: #0e1c24; }
+  .btn-blue:hover { filter: brightness(1.1); }
+  .btn-ghost { background: transparent; color: var(--muted); border: 1px solid #3a3f47; padding: 8px 14px; font-size: 11px; }
+  .btn-danger { background: transparent; color: var(--red-notice); border: 1px solid var(--red-notice); padding: 6px 10px; font-size: 10px; border-radius: 3px; cursor: pointer; }
+
+  .status-msg { font-size: 13px; margin-top: 10px; padding: 8px 10px; border-radius: 3px; display: none; }
+  .status-msg.show { display: block; }
+  .status-msg.ok { background: rgba(79,138,91,0.15); color: #8fd39e; border: 1px solid rgba(79,138,91,0.4); }
+  .status-msg.warn { background: rgba(232,163,61,0.12); color: var(--amber); border: 1px solid rgba(232,163,61,0.4); }
+
+  .ticket {
+    background: var(--paper); color: #201e1a; border-radius: 3px; padding: 14px 16px; margin-bottom: 10px;
+    display: flex; align-items: center; gap: 14px; border-left: 6px solid var(--muted);
+  }
+  .ticket.tier-new { border-left-color: var(--green-ok); }
+  .ticket.tier-1 { border-left-color: var(--amber-deep); }
+  .ticket.tier-2 { border-left-color: var(--red-notice); }
+  .ticket.tier-escalate { border-left-color: #7a1f14; background: #f5e6e2; }
+  .ticket.tier-exempt { border-left-color: var(--blue-note); background: #e9eef1; }
+  .ticket.tier-approved { border-left-color: #3d7a9c; background: #e6eff3; }
+  .ticket .plate { font-family: var(--mono); font-weight: 700; font-size: 18px; letter-spacing: 1px; background: #1c1e22; color: var(--line-white); border-radius: 3px; padding: 6px 10px; white-space: nowrap; }
+  .ticket .info { flex: 1; }
+  .ticket .info .label { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: 13px; letter-spacing: 0.5px; }
+  .ticket .info .detail { font-size: 12.5px; color: #55524a; margin-top: 2px; }
+  .ticket .days { font-family: var(--mono); font-size: 11px; color: var(--muted); text-align: right; min-width: 70px; }
+  .ticket .days b { display: block; font-size: 20px; color: #201e1a; }
+  .left-section { background: #2a2e26; border-left: 6px solid var(--muted); }
+  .left-section .plate { background: #3a3f37; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid #34383f; vertical-align: middle; }
+  th { text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.8px; color: var(--muted); font-weight: 600; }
+  td.plate-cell { font-family: var(--mono); font-weight: 700; }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10.5px; font-family: var(--display); text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+  .pill-new { background: rgba(79,138,91,0.18); color: #8fd39e; }
+  .pill-1 { background: rgba(201,127,26,0.2); color: var(--amber); }
+  .pill-2 { background: rgba(192,67,47,0.2); color: #e58f7f; }
+  .pill-escalate { background: rgba(122,31,20,0.35); color: #ff9a85; }
+  .pill-exempt { background: rgba(76,134,176,0.2); color: #8fc4e8; }
+  .pill-approved { background: rgba(61,122,156,0.25); color: #a3d3f0; }
+
+  .empty { color: var(--muted); font-size: 13px; padding: 10px 0; }
+  .log-row, .mini-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #34383f; font-size: 13px; gap: 10px; }
+  .log-row:last-child, .mini-row:last-child { border-bottom: none; }
+  .log-row .date { font-family: var(--mono); color: var(--amber); }
+  .log-row .count { color: var(--muted); font-size: 12px; display: flex; align-items: center; }
+  .mini-row .plate-tag { font-family: var(--mono); font-weight: 700; background: #14161a; padding: 3px 8px; border-radius: 3px; }
+  .mini-row .meta { flex: 1; font-size: 12px; color: var(--muted); margin-left: 10px; }
+
+  footer { text-align: center; color: var(--muted); font-size: 11px; margin-top: 30px; font-family: var(--mono); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div>
+      <h1>Lot<span>Watch</span></h1>
+      <div class="tagline">Daily rego walk &amp; overstay notice log</div>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab-btn active" data-view="walk-view">Daily Walk</button>
+    <button class="tab-btn" data-view="contractors-view">Contractors &amp; Exempt</button>
+    <button class="tab-btn" data-view="approvals-view">Special Approvals</button>
+  </nav>
+
+  <!-- WALK VIEW -->
+  <div class="view active" id="walk-view">
+    <div class="panel">
+      <h2>Log Today's Walk</h2>
+      <div class="field">
+        <label for="walk-date">Date of walk</label>
+        <input type="date" id="walk-date">
+      </div>
+      <div class="field">
+        <label for="rego-input">Plates currently parked (one per line)</label>
+        <textarea id="rego-input" placeholder="ABC123&#10;XYZ789&#10;7QW 456"></textarea>
+        <div class="hint">Include contractor and approved plates too — they're tracked but never notified. Leaving a plate off means it's recorded as having left the lot.</div>
+      </div>
+      <button class="action btn-primary" id="submit-walk">Submit Walk</button>
+      <div class="status-msg" id="status-msg"></div>
+    </div>
+
+    <div class="panel" id="results-panel" style="display:none;">
+      <h2>Result of This Walk</h2>
+      <div id="results-list"></div>
+    </div>
+
+    <div class="panel">
+      <h2>Current Registry — Vehicles On Site</h2>
+      <div id="registry-table"><div class="empty">No walks logged yet.</div></div>
+    </div>
+
+    <div class="panel">
+      <h2>Walk History</h2>
+      <div id="history-list"><div class="empty">No walks logged yet.</div></div>
+    </div>
+  </div>
+
+  <!-- CONTRACTORS VIEW -->
+  <div class="view" id="contractors-view">
+    <div class="panel">
+      <h2>Add Contractor / Exempt Vehicle</h2>
+      <p class="sub">Plates on this list are monitored on every walk but never receive a notice — days-on-site still shows, but the status always reads "Exempt".</p>
+      <div class="row">
+        <div class="field">
+          <label for="contractor-plate">Plate</label>
+          <input type="text" id="contractor-plate" placeholder="ABC123">
+        </div>
+        <div class="field" style="flex:2;">
+          <label for="contractor-note">Who they are</label>
+          <input type="text" id="contractor-note" placeholder="e.g. Sparkwell Electrical — site contractor">
+        </div>
+      </div>
+      <button class="action btn-blue" id="add-contractor">Add to Exempt List</button>
+      <div class="status-msg" id="contractor-status"></div>
+    </div>
+    <div class="panel">
+      <h2>Current Exempt List</h2>
+      <div id="contractor-list"><div class="empty">No contractors added yet.</div></div>
+    </div>
+  </div>
+
+  <!-- APPROVALS VIEW -->
+  <div class="view" id="approvals-view">
+    <div class="panel">
+      <h2>Grant a Special Approval</h2>
+      <p class="sub">Approve a plate to park for a fixed date range. While the range is active it's exempt from notices. The day after it expires, if the car is still on site, it's immediately flagged for a notice.</p>
+      <div class="row">
+        <div class="field">
+          <label for="approval-plate">Plate</label>
+          <input type="text" id="approval-plate" placeholder="XYZ789">
+        </div>
+        <div class="field" style="flex:2;">
+          <label for="approval-note">Reason / who approved it</label>
+          <input type="text" id="approval-note" placeholder="e.g. Visiting family — approved by strata manager">
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="approval-start">Start date</label>
+          <input type="date" id="approval-start">
+        </div>
+        <div class="field">
+          <label for="approval-end">End date</label>
+          <input type="date" id="approval-end">
+        </div>
+      </div>
+      <button class="action btn-blue" id="add-approval">Grant Approval</button>
+      <div class="status-msg" id="approval-status"></div>
+    </div>
+    <div class="panel">
+      <h2>Current &amp; Past Approvals</h2>
+      <div id="approval-list"><div class="empty">No approvals added yet.</div></div>
+    </div>
+  </div>
+
+  <footer>DATA STORED PRIVATELY FOR THIS ACCOUNT · LOT WATCH</footer>
+</div>
+
+<script>
+/* ---------- On-device storage (replaces Claude artifact storage for standalone app) ----------
+   Same get/set/delete/list interface as window.storage, backed by localStorage so data
+   lives on this phone/browser only. */
+window.storage = {
+  async get(key) {
+    const val = localStorage.getItem('lotwatch:' + key);
+    return val === null ? null : { key, value: val, shared: false };
+  },
+  async set(key, value) {
+    localStorage.setItem('lotwatch:' + key, value);
+    return { key, value, shared: false };
+  },
+  async delete(key) {
+    localStorage.removeItem('lotwatch:' + key);
+    return { key, deleted: true, shared: false };
+  },
+  async list(prefix) {
+    const keys = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith('lotwatch:')) {
+        const bare = k.slice('lotwatch:'.length);
+        if (!prefix || bare.startsWith(prefix)) keys.push(bare);
+      }
+    }
+    return { keys, prefix, shared: false };
+  }
+};
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('service-worker.js').catch(() => {});
+  });
+}
+
+/* ---------- Config ---------- */
+const ESCALATION_DAY = 4; // day at which a normal overstay hits "escalate: breach notice"
+
+/* ---------- Helpers ---------- */
+function todayStr() { return new Date().toISOString().slice(0,10); }
+function normalizePlate(p) { return p.trim().toUpperCase().replace(/\s+/g, ' '); }
+function dayLabel(n) { return n === 1 ? '1 day' : n + ' days'; }
+
+/* ---------- Tabs ---------- */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.view).classList.add('active');
+  });
+});
+
+/* ---------- Storage helpers ---------- */
+async function loadJSON(key, fallback) {
+  try {
+    const res = await window.storage.get(key, false);
+    return res ? JSON.parse(res.value) : fallback;
+  } catch (e) { return fallback; }
+}
+async function saveJSON(key, value) {
+  return window.storage.set(key, JSON.stringify(value), false);
+}
+
+async function getAllLogs() {
+  const listRes = await window.storage.list('log:', false);
+  const keys = listRes ? listRes.keys : [];
+  const entries = [];
+  for (const key of keys) {
+    try {
+      const res = await window.storage.get(key, false);
+      if (res) entries.push({ date: key.slice(4), plates: JSON.parse(res.value) });
+    } catch (e) { /* skip */ }
+  }
+  entries.sort((a, b) => a.date.localeCompare(b.date));
+  return entries;
+}
+
+/* ---------- Exempt / Approval lookups ---------- */
+function isContractor(plate, contractors) {
+  return contractors.some(c => c.plate === plate);
+}
+function activeApproval(plate, date, approvals) {
+  return approvals.find(a => a.plate === plate && a.start <= date && date <= a.end) || null;
+}
+
+/* ---------- Core streak engine ---------- */
+function computeRegistry(logs, contractors, approvals) {
+  const state = {}; // plate -> { streak, origin, lastDate, excused, approvalEnd }
+  const everSeen = new Set();
+
+  for (let i = 0; i < logs.length; i++) {
+    const entry = logs[i];
+    const date = entry.date;
+    const prevWalkDate = i > 0 ? logs[i-1].date : null;
+    const platesToday = new Set(entry.plates);
+
+    for (const plate of platesToday) {
+      everSeen.add(plate);
+      const contractor = isContractor(plate, contractors);
+      const appr = activeApproval(plate, date, approvals);
+      const excused = contractor || !!appr;
+      const prev = state[plate];
+      const wasPresentPrevWalk = !!(prev && prevWalkDate && prev.lastDate === prevWalkDate);
+
+      if (excused) {
+        state[plate] = {
+          streak: 0,
+          origin: contractor ? 'contractor' : 'approved',
+          lastDate: date,
+          excused: true,
+          approvalEnd: appr ? appr.end : (prev ? prev.approvalEnd : undefined)
+        };
+      } else if (wasPresentPrevWalk && prev && !prev.excused) {
+        state[plate] = {
+          streak: prev.streak + 1,
+          origin: prev.origin === 'expired' ? 'expired' : 'normal',
+          lastDate: date,
+          excused: false,
+          approvalEnd: prev.approvalEnd
+        };
+      } else if (wasPresentPrevWalk && prev && prev.excused) {
+        const cameFromApproval = prev.origin === 'approved';
+        state[plate] = {
+          streak: 1,
+          origin: cameFromApproval ? 'expired' : 'normal',
+          lastDate: date,
+          excused: false,
+          approvalEnd: prev.approvalEnd
+        };
+      } else {
+        state[plate] = {
+          streak: 1,
+          origin: 'new',
+          lastDate: date,
+          excused: false,
+          approvalEnd: prev ? prev.approvalEnd : undefined
+        };
+      }
+    }
+  }
+
+  const latestDate = logs.length ? logs[logs.length - 1].date : null;
+  const current = [];
+  const left = [];
+  for (const plate of everSeen) {
+    const s = state[plate];
+    if (s.lastDate === latestDate) {
+      current.push({ plate, ...s });
+    } else {
+      left.push({ plate, lastSeen: s.lastDate });
+    }
+  }
+  current.sort((a, b) => (b.streak - a.streak) || a.plate.localeCompare(b.plate));
+  left.sort((a, b) => b.lastSeen.localeCompare(a.lastSeen));
+  return { current, left, latestDate };
+}
+
+function stageInfo(v) {
+  if (v.excused) {
+    if (v.origin === 'contractor') {
+      return { tier: 'exempt', pill: 'pill-exempt', label: 'Contractor — exempt',
+        detail: 'On the exempt list. Monitored, but never notified.' };
+    }
+    return { tier: 'approved', pill: 'pill-approved', label: 'Approved parking',
+      detail: `Special approval active through ${v.approvalEnd}. No notice needed.` };
+  }
+  if (v.origin === 'expired') {
+    if (v.streak >= 3) {
+      return { tier: 'escalate', pill: 'pill-escalate', label: 'Escalate — Breach Notice',
+        detail: `Approval expired ${v.approvalEnd}, vehicle still on site ${v.streak} days after. Pull CCTV, identify the resident, issue an official breach notice.` };
+    }
+    if (v.streak === 2) {
+      return { tier: '2', pill: 'pill-2', label: '2nd Notice due',
+        detail: `Approval expired ${v.approvalEnd} — still overstaying. Place the second notice.` };
+    }
+    return { tier: '1', pill: 'pill-1', label: '1st Notice due',
+      detail: `Special approval expired ${v.approvalEnd} and the vehicle is still parked. Place a notice immediately.` };
+  }
+  if (v.streak >= ESCALATION_DAY) {
+    return { tier: 'escalate', pill: 'pill-escalate', label: 'Escalate — Breach Notice',
+      detail: `Parked ${v.streak} consecutive days. Pull CCTV, identify the resident, and issue an official breach notice.` };
+  }
+  if (v.streak === ESCALATION_DAY - 1) {
+    return { tier: '2', pill: 'pill-2', label: '2nd Notice due',
+      detail: `Parked ${v.streak} consecutive days. Place the second, consecutive-day notice.` };
+  }
+  if (v.streak === 2) {
+    return { tier: '1', pill: 'pill-1', label: '1st Notice due',
+      detail: 'Parked since yesterday. Place a notice for overstaying more than one day.' };
+  }
+  return { tier: 'new', pill: 'pill-new', label: 'New sighting',
+    detail: 'First time seen. No action needed yet — will flag tomorrow if still parked.' };
+}
+
+function showStatus(elId, kind, msg) {
+  const el = document.getElementById(elId);
+  el.textContent = msg;
+  el.className = `status-msg show ${kind}`;
+}
+
+/* ---------- Render: Walk view ---------- */
+async function renderRegistry() {
+  const [logs, contractors, approvals] = await Promise.all([
+    getAllLogs(), loadJSON('contractors', []), loadJSON('approvals', [])
+  ]);
+  const { current, left } = computeRegistry(logs, contractors, approvals);
+  const regTable = document.getElementById('registry-table');
+
+  if (current.length === 0) {
+    regTable.innerHTML = '<div class="empty">No vehicles currently on record. Log a walk to begin.</div>';
+  } else {
+    let html = '<table><thead><tr><th>Plate</th><th>Days parked</th><th>Status</th></tr></thead><tbody>';
+    for (const v of current) {
+      const info = stageInfo(v);
+      html += `<tr>
+        <td class="plate-cell">${v.plate}</td>
+        <td>${v.excused ? '—' : dayLabel(v.streak)}</td>
+        <td><span class="pill ${info.pill}">${info.label}</span></td>
+      </tr>`;
+    }
+    html += '</tbody></table>';
+    regTable.innerHTML = html;
+  }
+
+  const historyList = document.getElementById('history-list');
+  if (logs.length === 0) {
+    historyList.innerHTML = '<div class="empty">No walks logged yet.</div>';
+  } else {
+    let html = '';
+    for (const entry of [...logs].reverse()) {
+      html += `<div class="log-row">
+        <span class="date">${entry.date}</span>
+        <span class="count">${entry.plates.length} vehicle${entry.plates.length === 1 ? '' : 's'}
+          <button class="btn-danger" data-delete-date="${entry.date}" style="margin-left:10px;">Delete</button>
+        </span>
+      </div>`;
+    }
+    historyList.innerHTML = html;
+    historyList.querySelectorAll('[data-delete-date]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (confirm(`Delete the walk logged on ${btn.dataset.deleteDate}? This will recompute all streaks.`)) {
+          await window.storage.delete('log:' + btn.dataset.deleteDate, false);
+          await renderRegistry();
+          showStatus('status-msg', 'ok', `Deleted walk for ${btn.dataset.deleteDate}.`);
+        }
+      });
+    });
+  }
+}
+
+function renderResults(current, left) {
+  const panel = document.getElementById('results-panel');
+  const list = document.getElementById('results-list');
+  panel.style.display = 'block';
+  let html = '';
+
+  if (current.length === 0 && left.length === 0) {
+    html = '<div class="empty">No vehicles recorded.</div>';
+  }
+
+  const priority = { escalate: 0, '2': 1, '1': 2, new: 3, approved: 4, exempt: 5 };
+  const sorted = [...current].sort((a, b) => priority[stageInfo(a).tier] - priority[stageInfo(b).tier]);
+
+  for (const v of sorted) {
+    const info = stageInfo(v);
+    html += `<div class="ticket tier-${info.tier}">
+      <div class="plate">${v.plate}</div>
+      <div class="info">
+        <div class="label">${info.label}</div>
+        <div class="detail">${info.detail}</div>
+      </div>
+      <div class="days">${v.excused ? '' : dayLabel(v.streak)}<b>${v.excused ? '—' : v.streak}</b></div>
+    </div>`;
+  }
+
+  html += left.slice(0, 8).map(v => `
+    <div class="ticket left-section">
+      <div class="plate">${v.plate}</div>
+      <div class="info">
+        <div class="label" style="color:#c9d1c3;">No longer present</div>
+        <div class="detail" style="color:#a9b0a3;">Last seen ${v.lastSeen}. Not on today's walk — treated as departed.</div>
+      </div>
+    </div>`).join('');
+
+  list.innerHTML = html;
+}
+
+document.getElementById('submit-walk').addEventListener('click', async () => {
+  const dateInput = document.getElementById('walk-date');
+  const date = dateInput.value;
+  if (!date) { showStatus('status-msg', 'warn', 'Pick a date for this walk first.'); return; }
+
+  const raw = document.getElementById('rego-input').value;
+  const plates = [...new Set(raw.split('\n').map(normalizePlate).filter(p => p.length > 0))];
+
+  try {
+    const existing = await window.storage.get('log:' + date, false).catch(() => null);
+    if (existing) {
+      if (!confirm(`A walk for ${date} already exists (${JSON.parse(existing.value).length} plates). Overwrite it?`)) return;
+    }
+  } catch (e) { /* no existing entry */ }
+
+  try {
+    const result = await window.storage.set('log:' + date, JSON.stringify(plates), false);
+    if (!result) throw new Error('no result');
+  } catch (e) {
+    showStatus('status-msg', 'warn', 'Could not save this walk. Please try again.');
+    return;
+  }
+
+  const [logs, contractors, approvals] = await Promise.all([
+    getAllLogs(), loadJSON('contractors', []), loadJSON('approvals', [])
+  ]);
+  const { current, left, latestDate } = computeRegistry(logs, contractors, approvals);
+
+  if (latestDate === date) {
+    renderResults(current, left.filter(v => v.lastSeen !== date));
+  } else {
+    document.getElementById('results-list').innerHTML =
+      `<div class="empty">Saved a walk for ${date}, but a later walk already exists — showing the registry as of the most recent walk below.</div>`;
+    document.getElementById('results-panel').style.display = 'block';
+  }
+
+  showStatus('status-msg', 'ok', `Walk for ${date} saved — ${plates.length} vehicle${plates.length === 1 ? '' : 's'} logged.`);
+  document.getElementById('rego-input').value = '';
+  await renderRegistry();
+});
+
+/* ---------- Render: Contractors view ---------- */
+async function renderContractors() {
+  const contractors = await loadJSON('contractors', []);
+  const el = document.getElementById('contractor-list');
+  if (contractors.length === 0) {
+    el.innerHTML = '<div class="empty">No contractors added yet.</div>';
+    return;
+  }
+  el.innerHTML = contractors.map(c => `
+    <div class="mini-row">
+      <span class="plate-tag">${c.plate}</span>
+      <span class="meta">${c.note || ''}</span>
+      <button class="btn-danger" data-remove-contractor="${c.plate}">Remove</button>
+    </div>`).join('');
+  el.querySelectorAll('[data-remove-contractor]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const plate = btn.dataset.removeContractor;
+      const list = (await loadJSON('contractors', [])).filter(c => c.plate !== plate);
+      await saveJSON('contractors', list);
+      await renderContractors();
+      await renderRegistry();
+    });
+  });
+}
+
+document.getElementById('add-contractor').addEventListener('click', async () => {
+  const plateEl = document.getElementById('contractor-plate');
+  const noteEl = document.getElementById('contractor-note');
+  const plate = normalizePlate(plateEl.value);
+  if (!plate) { showStatus('contractor-status', 'warn', 'Enter a plate first.'); return; }
+
+  const list = await loadJSON('contractors', []);
+  if (list.some(c => c.plate === plate)) {
+    showStatus('contractor-status', 'warn', `${plate} is already on the exempt list.`);
+    return;
+  }
+  list.push({ plate, note: noteEl.value.trim() });
+  await saveJSON('contractors', list);
+  plateEl.value = ''; noteEl.value = '';
+  showStatus('contractor-status', 'ok', `${plate} added to the exempt list.`);
+  await renderContractors();
+  await renderRegistry();
+});
+
+/* ---------- Render: Approvals view ---------- */
+function approvalStatusLabel(a) {
+  const today = todayStr();
+  if (today < a.start) return { text: 'Upcoming', color: '#a3d3f0' };
+  if (today > a.end) return { text: 'Expired', color: '#ff9a85' };
+  return { text: 'Active', color: '#8fd39e' };
+}
+
+async function renderApprovals() {
+  const approvals = await loadJSON('approvals', []);
+  const el = document.getElementById('approval-list');
+  if (approvals.length === 0) {
+    el.innerHTML = '<div class="empty">No approvals added yet.</div>';
+    return;
+  }
+  const sorted = [...approvals].sort((a, b) => b.end.localeCompare(a.end));
+  el.innerHTML = sorted.map((a) => {
+    const st = approvalStatusLabel(a);
+    return `
+    <div class="mini-row">
+      <span class="plate-tag">${a.plate}</span>
+      <span class="meta">${a.start} → ${a.end} · <span style="color:${st.color};">${st.text}</span>${a.note ? ' · ' + a.note : ''}</span>
+      <button class="btn-danger" data-remove-approval="${a.plate}|${a.start}|${a.end}">Remove</button>
+    </div>`;
+  }).join('');
+  el.querySelectorAll('[data-remove-approval]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const [plate, start, end] = btn.dataset.removeApproval.split('|');
+      const list = (await loadJSON('approvals', [])).filter(a => !(a.plate === plate && a.start === start && a.end === end));
+      await saveJSON('approvals', list);
+      await renderApprovals();
+      await renderRegistry();
+    });
+  });
+}
+
+document.getElementById('add-approval').addEventListener('click', async () => {
+  const plateEl = document.getElementById('approval-plate');
+  const noteEl = document.getElementById('approval-note');
+  const startEl = document.getElementById('approval-start');
+  const endEl = document.getElementById('approval-end');
+  const plate = normalizePlate(plateEl.value);
+  const start = startEl.value;
+  const end = endEl.value;
+
+  if (!plate) { showStatus('approval-status', 'warn', 'Enter a plate first.'); return; }
+  if (!start || !end) { showStatus('approval-status', 'warn', 'Pick both a start and end date.'); return; }
+  if (end < start) { showStatus('approval-status', 'warn', 'End date must be on or after the start date.'); return; }
+
+  const list = await loadJSON('approvals', []);
+  list.push({ plate, start, end, note: noteEl.value.trim() });
+  await saveJSON('approvals', list);
+  plateEl.value = ''; noteEl.value = ''; startEl.value = ''; endEl.value = '';
+  showStatus('approval-status', 'ok', `Approval granted for ${plate} (${start} → ${end}).`);
+  await renderApprovals();
+  await renderRegistry();
+});
+
+/* ---------- Init ---------- */
+document.getElementById('walk-date').value = todayStr();
+renderRegistry();
+renderContractors();
+renderApprovals();
+</script>
+</body>
+</html>
