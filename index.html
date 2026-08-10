@@ -12,6 +12,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
   :root {
     --asphalt: #1c1e22;
@@ -38,7 +39,7 @@
     min-height: 100vh;
     padding: 24px 16px 60px;
   }
-  .wrap { max-width: 860px; margin: 0 auto; }
+  .wrap { max-width: 880px; margin: 0 auto; }
 
   header.masthead {
     display: flex; align-items: baseline; justify-content: space-between;
@@ -62,15 +63,15 @@
 
   .panel { background: var(--asphalt-2); border: 1px solid #34383f; border-radius: 4px; padding: 18px 20px; margin-bottom: 20px; }
   .panel h2 { font-family: var(--display); text-transform: uppercase; font-size: 14px; letter-spacing: 1.5px; color: var(--amber); margin: 0 0 4px 0; }
-  .panel .sub { font-size: 12px; color: var(--muted); margin: 0 0 14px 0; }
+  .panel .sub { font-size: 12px; color: var(--muted); margin: 0 0 14px 0; line-height: 1.5; }
 
   label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px; }
-  input[type="date"], input[type="text"], textarea {
+  input[type="date"], input[type="month"], input[type="text"], textarea {
     width: 100%; background: #14161a; border: 1px solid #3a3f47; color: var(--line-white);
     border-radius: 3px; padding: 10px 12px; font-family: var(--mono); font-size: 14px;
   }
   textarea { min-height: 110px; resize: vertical; line-height: 1.6; text-transform: uppercase; }
-  input[type="date"] { max-width: 220px; }
+  input[type="date"], input[type="month"] { max-width: 220px; }
   .field { margin-bottom: 14px; }
   .hint { font-size: 12px; color: var(--muted); margin-top: 4px; }
   .row { display: flex; gap: 12px; flex-wrap: wrap; }
@@ -87,6 +88,12 @@
   .btn-blue:hover { filter: brightness(1.1); }
   .btn-ghost { background: transparent; color: var(--muted); border: 1px solid #3a3f47; padding: 8px 14px; font-size: 11px; }
   .btn-danger { background: transparent; color: var(--red-notice); border: 1px solid var(--red-notice); padding: 6px 10px; font-size: 10px; border-radius: 3px; cursor: pointer; }
+  .btn-mini {
+    background: #14161a; color: var(--amber); border: 1px solid var(--amber-deep); font-size: 10.5px;
+    padding: 6px 10px; border-radius: 3px; cursor: pointer; font-family: var(--display);
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .btn-mini:hover { background: var(--amber); color: #1c1e22; }
 
   .status-msg { font-size: 13px; margin-top: 10px; padding: 8px 10px; border-radius: 3px; display: none; }
   .status-msg.show { display: block; }
@@ -95,7 +102,7 @@
 
   .ticket {
     background: var(--paper); color: #201e1a; border-radius: 3px; padding: 14px 16px; margin-bottom: 10px;
-    display: flex; align-items: center; gap: 14px; border-left: 6px solid var(--muted);
+    display: flex; align-items: center; gap: 14px; border-left: 6px solid var(--muted); flex-wrap: wrap;
   }
   .ticket.tier-new { border-left-color: var(--green-ok); }
   .ticket.tier-1 { border-left-color: var(--amber-deep); }
@@ -103,12 +110,15 @@
   .ticket.tier-escalate { border-left-color: #7a1f14; background: #f5e6e2; }
   .ticket.tier-exempt { border-left-color: var(--blue-note); background: #e9eef1; }
   .ticket.tier-approved { border-left-color: #3d7a9c; background: #e6eff3; }
+  .ticket.tier-approval-flag { border-left-color: #b06a1f; background: #f6ecdc; }
   .ticket .plate { font-family: var(--mono); font-weight: 700; font-size: 18px; letter-spacing: 1px; background: #1c1e22; color: var(--line-white); border-radius: 3px; padding: 6px 10px; white-space: nowrap; }
-  .ticket .info { flex: 1; }
+  .ticket .info { flex: 1; min-width: 180px; }
   .ticket .info .label { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: 13px; letter-spacing: 0.5px; }
   .ticket .info .detail { font-size: 12.5px; color: #55524a; margin-top: 2px; }
   .ticket .days { font-family: var(--mono); font-size: 11px; color: var(--muted); text-align: right; min-width: 70px; }
   .ticket .days b { display: block; font-size: 20px; color: #201e1a; }
+  .ticket-actions { flex-basis: 100%; display: flex; align-items: center; gap: 10px; margin-top: 4px; }
+  .ticket-actions .photo-note { font-size: 11px; color: #6b6a5f; }
   .left-section { background: #2a2e26; border-left: 6px solid var(--muted); }
   .left-section .plate { background: #3a3f37; }
 
@@ -123,14 +133,20 @@
   .pill-escalate { background: rgba(122,31,20,0.35); color: #ff9a85; }
   .pill-exempt { background: rgba(76,134,176,0.2); color: #8fc4e8; }
   .pill-approved { background: rgba(61,122,156,0.25); color: #a3d3f0; }
+  .pill-approval-flag { background: rgba(176,106,31,0.25); color: #e8b46a; }
 
   .empty { color: var(--muted); font-size: 13px; padding: 10px 0; }
-  .log-row, .mini-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #34383f; font-size: 13px; gap: 10px; }
+  .log-row, .mini-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #34383f; font-size: 13px; gap: 10px; flex-wrap: wrap; }
   .log-row:last-child, .mini-row:last-child { border-bottom: none; }
   .log-row .date { font-family: var(--mono); color: var(--amber); }
   .log-row .count { color: var(--muted); font-size: 12px; display: flex; align-items: center; }
   .mini-row .plate-tag { font-family: var(--mono); font-weight: 700; background: #14161a; padding: 3px 8px; border-radius: 3px; }
   .mini-row .meta { flex: 1; font-size: 12px; color: var(--muted); margin-left: 10px; }
+
+  .photo-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 6px; }
+  .photo-card { background: #14161a; border: 1px solid #3a3f47; border-radius: 4px; padding: 8px; width: 112px; text-align: center; }
+  .photo-thumb { width: 96px; height: 96px; object-fit: cover; border-radius: 4px; border: 1px solid #3a3f47; }
+  .photo-card .meta { font-size: 10px; color: var(--muted); margin: 5px 0; }
 
   footer { text-align: center; color: var(--muted); font-size: 11px; margin-top: 30px; font-family: var(--mono); }
 </style>
@@ -149,6 +165,8 @@
     <button class="tab-btn active" data-view="walk-view">Daily Walk</button>
     <button class="tab-btn" data-view="contractors-view">Contractors &amp; Exempt</button>
     <button class="tab-btn" data-view="approvals-view">Special Approvals</button>
+    <button class="tab-btn" data-view="photos-view">Photos</button>
+    <button class="tab-btn" data-view="reports-view">Reports</button>
   </nav>
 
   <!-- WALK VIEW -->
@@ -212,7 +230,7 @@
   <div class="view" id="approvals-view">
     <div class="panel">
       <h2>Grant a Special Approval</h2>
-      <p class="sub">Approve a plate to park for a fixed date range. While the range is active it's exempt from notices. The day after it expires, if the car is still on site, it's immediately flagged for a notice.</p>
+      <p class="sub">Approve a plate to park for a fixed date range. While the range is active it's exempt from notices. The day after it expires, if the car is still on site, it's immediately flagged to notify the resident to remove it.</p>
       <div class="row">
         <div class="field">
           <label for="approval-plate">Plate</label>
@@ -242,13 +260,68 @@
     </div>
   </div>
 
+  <!-- PHOTOS VIEW -->
+  <div class="view" id="photos-view">
+    <div class="panel">
+      <h2>Add a Photo</h2>
+      <p class="sub">Attach evidence to any plate — photos taken from a notice ticket land here automatically too. Photos are embedded into weekly and monthly PDF reports.</p>
+      <div class="row">
+        <div class="field">
+          <label for="manual-photo-plate">Plate</label>
+          <input type="text" id="manual-photo-plate" placeholder="ABC123">
+        </div>
+        <div class="field">
+          <label for="manual-photo-date">Date</label>
+          <input type="date" id="manual-photo-date">
+        </div>
+      </div>
+      <div class="field">
+        <label for="manual-photo-note">Note (optional)</label>
+        <input type="text" id="manual-photo-note" placeholder="e.g. Notice placed under wiper">
+      </div>
+      <button class="action btn-blue" id="manual-photo-btn">Choose / Take Photo</button>
+      <div class="status-msg" id="photos-status"></div>
+    </div>
+    <div class="panel">
+      <h2>All Photos</h2>
+      <div id="photos-list"><div class="empty">No photos captured yet.</div></div>
+    </div>
+  </div>
+
+  <!-- REPORTS VIEW -->
+  <div class="view" id="reports-view">
+    <div class="panel">
+      <h2>Weekly Report</h2>
+      <p class="sub">Pick any date and it generates a PDF for that Monday–Sunday week: notices issued, vehicles bridged, an end-of-week snapshot, and evidence photos. The database keeps accumulating — nothing resets when you generate a report.</p>
+      <div class="field">
+        <label for="weekly-anchor">Any date within the target week</label>
+        <input type="date" id="weekly-anchor">
+      </div>
+      <button class="action btn-primary" id="generate-weekly">Generate Weekly PDF</button>
+      <div class="status-msg" id="weekly-status"></div>
+    </div>
+
+    <div class="panel">
+      <h2>Monthly Report</h2>
+      <p class="sub">Covers a full calendar month: all notices and breaches, plus "occasional parkers" — plates that keep returning on non-consecutive days often enough to be worth flagging, even though they never stayed long enough to trigger a notice.</p>
+      <div class="field">
+        <label for="monthly-anchor">Month</label>
+        <input type="month" id="monthly-anchor">
+      </div>
+      <button class="action btn-primary" id="generate-monthly">Generate Monthly PDF</button>
+      <div class="status-msg" id="monthly-status"></div>
+    </div>
+  </div>
+
+  <input type="file" accept="image/*" capture="environment" id="photo-file-input" style="display:none;">
   <footer>DATA STORED PRIVATELY FOR THIS ACCOUNT · LOT WATCH</footer>
 </div>
 
 <script>
 /* ---------- On-device storage (replaces Claude artifact storage for standalone app) ----------
    Same get/set/delete/list interface as window.storage, backed by localStorage so data
-   lives on this phone/browser only. */
+   lives on this phone/browser only. Photos are base64 strings, so this can grow — most
+   browsers allow 5–10MB of localStorage per origin, which is thousands of compressed photos. */
 window.storage = {
   async get(key) {
     const val = localStorage.getItem('lotwatch:' + key);
@@ -282,12 +355,17 @@ if ('serviceWorker' in navigator) {
 }
 
 /* ---------- Config ---------- */
-const ESCALATION_DAY = 4; // day at which a normal overstay hits "escalate: breach notice"
+const ESCALATION_DAY = 4;       // day at which a normal overstay hits "escalate: breach notice"
+const OCCASIONAL_MIN_DAYS = 4;  // days present in a month (non-consecutive) before flagging as an occasional parker
+const NOTIFIABLE_TIERS = ['1', '2', 'escalate', 'approval-flag'];
 
-/* ---------- Helpers ---------- */
+/* ---------- Date helpers ---------- */
 function todayStr() { return new Date().toISOString().slice(0,10); }
 function normalizePlate(p) { return p.trim().toUpperCase().replace(/\s+/g, ' '); }
 function dayLabel(n) { return n === 1 ? '1 day' : n + ' days'; }
+function addDays(dateStr, n) { const d = new Date(dateStr + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0,10); }
+function daysBetween(d1, d2) { return Math.round((new Date(d2 + 'T00:00:00Z') - new Date(d1 + 'T00:00:00Z')) / 86400000); }
+function mondayOf(dateStr) { const d = new Date(dateStr + 'T00:00:00Z'); const day = d.getUTCDay(); const diff = (day === 0 ? -6 : 1 - day); return addDays(dateStr, diff); }
 
 /* ---------- Tabs ---------- */
 document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -296,6 +374,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById(btn.dataset.view).classList.add('active');
+    if (btn.dataset.view === 'photos-view') renderPhotos();
   });
 });
 
@@ -309,7 +388,6 @@ async function loadJSON(key, fallback) {
 async function saveJSON(key, value) {
   return window.storage.set(key, JSON.stringify(value), false);
 }
-
 async function getAllLogs() {
   const listRes = await window.storage.list('log:', false);
   const keys = listRes ? listRes.keys : [];
@@ -325,16 +403,19 @@ async function getAllLogs() {
 }
 
 /* ---------- Exempt / Approval lookups ---------- */
-function isContractor(plate, contractors) {
-  return contractors.some(c => c.plate === plate);
-}
+function isContractor(plate, contractors) { return contractors.some(c => c.plate === plate); }
 function activeApproval(plate, date, approvals) {
   return approvals.find(a => a.plate === plate && a.start <= date && date <= a.end) || null;
 }
 
-/* ---------- Core streak engine ---------- */
+/* ---------- Core streak engine ----------
+   Streak advances by the number of CALENDAR DAYS elapsed between two walks
+   (not just +1 per walk). A Friday-to-Monday gap where the car is seen both
+   times therefore adds 3 days automatically — the weekend counts as
+   consecutive days on site, so a car that's borderline on Friday can land
+   straight on an escalate/breach status the following Monday. */
 function computeRegistry(logs, contractors, approvals) {
-  const state = {}; // plate -> { streak, origin, lastDate, excused, approvalEnd }
+  const state = {};
   const everSeen = new Set();
 
   for (let i = 0; i < logs.length; i++) {
@@ -360,8 +441,9 @@ function computeRegistry(logs, contractors, approvals) {
           approvalEnd: appr ? appr.end : (prev ? prev.approvalEnd : undefined)
         };
       } else if (wasPresentPrevWalk && prev && !prev.excused) {
+        const elapsed = daysBetween(prevWalkDate, date);
         state[plate] = {
-          streak: prev.streak + 1,
+          streak: prev.streak + elapsed,
           origin: prev.origin === 'expired' ? 'expired' : 'normal',
           lastDate: date,
           excused: false,
@@ -393,11 +475,8 @@ function computeRegistry(logs, contractors, approvals) {
   const left = [];
   for (const plate of everSeen) {
     const s = state[plate];
-    if (s.lastDate === latestDate) {
-      current.push({ plate, ...s });
-    } else {
-      left.push({ plate, lastSeen: s.lastDate });
-    }
+    if (s.lastDate === latestDate) current.push({ plate, ...s });
+    else left.push({ plate, lastSeen: s.lastDate });
   }
   current.sort((a, b) => (b.streak - a.streak) || a.plate.localeCompare(b.plate));
   left.sort((a, b) => b.lastSeen.localeCompare(a.lastSeen));
@@ -416,14 +495,14 @@ function stageInfo(v) {
   if (v.origin === 'expired') {
     if (v.streak >= 3) {
       return { tier: 'escalate', pill: 'pill-escalate', label: 'Escalate — Breach Notice',
-        detail: `Approval expired ${v.approvalEnd}, vehicle still on site ${v.streak} days after. Pull CCTV, identify the resident, issue an official breach notice.` };
+        detail: `Approval expired ${v.approvalEnd}; vehicle still on site ${v.streak} days after, despite the resident being asked to remove it. Pull CCTV, identify the resident, and issue an official breach notice.` };
     }
     if (v.streak === 2) {
       return { tier: '2', pill: 'pill-2', label: '2nd Notice due',
-        detail: `Approval expired ${v.approvalEnd} — still overstaying. Place the second notice.` };
+        detail: `Approval expired ${v.approvalEnd} and the vehicle is still on site 2 days later. The resident was already asked to remove it — place a formal notice.` };
     }
-    return { tier: '1', pill: 'pill-1', label: '1st Notice due',
-      detail: `Special approval expired ${v.approvalEnd} and the vehicle is still parked. Place a notice immediately.` };
+    return { tier: 'approval-flag', pill: 'pill-approval-flag', label: 'Approval Expired — Notify Resident',
+      detail: `Approved until ${v.approvalEnd}. Still parked — flag the resident and ask them to remove the vehicle.` };
   }
   if (v.streak >= ESCALATION_DAY) {
     return { tier: 'escalate', pill: 'pill-escalate', label: 'Escalate — Breach Notice',
@@ -445,6 +524,73 @@ function showStatus(elId, kind, msg) {
   const el = document.getElementById(elId);
   el.textContent = msg;
   el.className = `status-msg show ${kind}`;
+}
+
+/* ---------- Photo capture ---------- */
+let pendingPhotoTarget = null;
+
+function resizeImageFile(file, maxDim = 1000, quality = 0.72) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        let w = img.width, h = img.height;
+        if (w > h && w > maxDim) { h = Math.round(h * maxDim / w); w = maxDim; }
+        else if (h >= w && h > maxDim) { w = Math.round(w * maxDim / h); h = maxDim; }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function triggerAttachPhoto(plate, date, tier, note) {
+  pendingPhotoTarget = { plate, date, tier: tier || '', note: note || '' };
+  document.getElementById('photo-file-input').click();
+}
+
+document.getElementById('photo-file-input').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  e.target.value = '';
+  if (!file || !pendingPhotoTarget) return;
+  const { plate, date, tier, note } = pendingPhotoTarget;
+  try {
+    const dataUrl = await resizeImageFile(file);
+    const ts = Date.now();
+    const key = `photo:${date}:${plate}:${ts}`;
+    await saveJSON(key, { dataUrl, plate, date, tier, note, timestamp: ts });
+    showStatus('status-msg', 'ok', `Photo attached to ${plate}.`);
+    showStatus('photos-status', 'ok', `Photo attached to ${plate}.`);
+    await renderRegistry();
+    if (document.getElementById('photos-view').classList.contains('active')) await renderPhotos();
+  } catch (err) {
+    showStatus('status-msg', 'warn', 'Could not process that photo. Try a smaller image.');
+  }
+  pendingPhotoTarget = null;
+});
+
+async function getAllPhotos() {
+  const listRes = await window.storage.list('photo:', false);
+  const keys = listRes ? listRes.keys : [];
+  const photos = [];
+  for (const k of keys) {
+    try {
+      const res = await window.storage.get(k, false);
+      if (res) photos.push({ key: k, ...JSON.parse(res.value) });
+    } catch (e) { /* skip */ }
+  }
+  photos.sort((a, b) => b.timestamp - a.timestamp);
+  return photos;
+}
+async function getPhotosForPlate(plate) {
+  return (await getAllPhotos()).filter(p => p.plate === plate);
 }
 
 /* ---------- Render: Walk view ---------- */
@@ -503,15 +649,14 @@ function renderResults(current, left) {
   panel.style.display = 'block';
   let html = '';
 
-  if (current.length === 0 && left.length === 0) {
-    html = '<div class="empty">No vehicles recorded.</div>';
-  }
+  if (current.length === 0 && left.length === 0) html = '<div class="empty">No vehicles recorded.</div>';
 
-  const priority = { escalate: 0, '2': 1, '1': 2, new: 3, approved: 4, exempt: 5 };
+  const priority = { escalate: 0, 'approval-flag': 1, '2': 2, '1': 3, new: 4, approved: 5, exempt: 6 };
   const sorted = [...current].sort((a, b) => priority[stageInfo(a).tier] - priority[stageInfo(b).tier]);
 
   for (const v of sorted) {
     const info = stageInfo(v);
+    const showPhotoBtn = NOTIFIABLE_TIERS.includes(info.tier);
     html += `<div class="ticket tier-${info.tier}">
       <div class="plate">${v.plate}</div>
       <div class="info">
@@ -519,6 +664,10 @@ function renderResults(current, left) {
         <div class="detail">${info.detail}</div>
       </div>
       <div class="days">${v.excused ? '' : dayLabel(v.streak)}<b>${v.excused ? '—' : v.streak}</b></div>
+      ${showPhotoBtn ? `<div class="ticket-actions">
+        <button class="btn-mini" data-attach-photo="${v.plate}|${v.lastDate}|${info.tier}">📷 Attach Notice Photo</button>
+        <span class="photo-note" id="photo-count-${v.plate.replace(/\\s+/g,'_')}"></span>
+      </div>` : ''}
     </div>`;
   }
 
@@ -532,6 +681,20 @@ function renderResults(current, left) {
     </div>`).join('');
 
   list.innerHTML = html;
+
+  list.querySelectorAll('[data-attach-photo]').forEach(btn => {
+    const [plate, date, tier] = btn.dataset.attachPhoto.split('|');
+    btn.addEventListener('click', () => triggerAttachPhoto(plate, date, tier));
+  });
+
+  (async () => {
+    for (const v of sorted) {
+      if (!NOTIFIABLE_TIERS.includes(stageInfo(v).tier)) continue;
+      const photos = await getPhotosForPlate(v.plate);
+      const span = document.getElementById(`photo-count-${v.plate.replace(/\s+/g,'_')}`);
+      if (span) span.textContent = photos.length ? `${photos.length} photo${photos.length > 1 ? 's' : ''} attached` : 'No photo yet';
+    }
+  })();
 }
 
 document.getElementById('submit-walk').addEventListener('click', async () => {
@@ -579,10 +742,7 @@ document.getElementById('submit-walk').addEventListener('click', async () => {
 async function renderContractors() {
   const contractors = await loadJSON('contractors', []);
   const el = document.getElementById('contractor-list');
-  if (contractors.length === 0) {
-    el.innerHTML = '<div class="empty">No contractors added yet.</div>';
-    return;
-  }
+  if (contractors.length === 0) { el.innerHTML = '<div class="empty">No contractors added yet.</div>'; return; }
   el.innerHTML = contractors.map(c => `
     <div class="mini-row">
       <span class="plate-tag">${c.plate}</span>
@@ -605,12 +765,8 @@ document.getElementById('add-contractor').addEventListener('click', async () => 
   const noteEl = document.getElementById('contractor-note');
   const plate = normalizePlate(plateEl.value);
   if (!plate) { showStatus('contractor-status', 'warn', 'Enter a plate first.'); return; }
-
   const list = await loadJSON('contractors', []);
-  if (list.some(c => c.plate === plate)) {
-    showStatus('contractor-status', 'warn', `${plate} is already on the exempt list.`);
-    return;
-  }
+  if (list.some(c => c.plate === plate)) { showStatus('contractor-status', 'warn', `${plate} is already on the exempt list.`); return; }
   list.push({ plate, note: noteEl.value.trim() });
   await saveJSON('contractors', list);
   plateEl.value = ''; noteEl.value = '';
@@ -630,10 +786,7 @@ function approvalStatusLabel(a) {
 async function renderApprovals() {
   const approvals = await loadJSON('approvals', []);
   const el = document.getElementById('approval-list');
-  if (approvals.length === 0) {
-    el.innerHTML = '<div class="empty">No approvals added yet.</div>';
-    return;
-  }
+  if (approvals.length === 0) { el.innerHTML = '<div class="empty">No approvals added yet.</div>'; return; }
   const sorted = [...approvals].sort((a, b) => b.end.localeCompare(a.end));
   el.innerHTML = sorted.map((a) => {
     const st = approvalStatusLabel(a);
@@ -663,11 +816,9 @@ document.getElementById('add-approval').addEventListener('click', async () => {
   const plate = normalizePlate(plateEl.value);
   const start = startEl.value;
   const end = endEl.value;
-
   if (!plate) { showStatus('approval-status', 'warn', 'Enter a plate first.'); return; }
   if (!start || !end) { showStatus('approval-status', 'warn', 'Pick both a start and end date.'); return; }
   if (end < start) { showStatus('approval-status', 'warn', 'End date must be on or after the start date.'); return; }
-
   const list = await loadJSON('approvals', []);
   list.push({ plate, start, end, note: noteEl.value.trim() });
   await saveJSON('approvals', list);
@@ -677,8 +828,254 @@ document.getElementById('add-approval').addEventListener('click', async () => {
   await renderRegistry();
 });
 
+/* ---------- Render: Photos view ---------- */
+async function renderPhotos() {
+  const photos = await getAllPhotos();
+  const el = document.getElementById('photos-list');
+  if (photos.length === 0) { el.innerHTML = '<div class="empty">No photos captured yet.</div>'; return; }
+  const byPlate = {};
+  photos.forEach(p => { (byPlate[p.plate] = byPlate[p.plate] || []).push(p); });
+  let html = '';
+  for (const plate of Object.keys(byPlate).sort()) {
+    html += `<h3 style="font-family:var(--display);text-transform:uppercase;color:var(--amber);font-size:13px;margin:16px 0 8px;">${plate}</h3><div class="photo-grid">`;
+    for (const p of byPlate[plate]) {
+      html += `<div class="photo-card">
+        <img class="photo-thumb" src="${p.dataUrl}">
+        <div class="meta">${p.date}${p.note ? '<br>' + p.note : ''}</div>
+        <button class="btn-danger" data-remove-photo="${p.key}">Remove</button>
+      </div>`;
+    }
+    html += `</div>`;
+  }
+  el.innerHTML = html;
+  el.querySelectorAll('[data-remove-photo]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      await window.storage.delete(btn.dataset.removePhoto, false);
+      await renderPhotos();
+      await renderRegistry();
+    });
+  });
+}
+
+document.getElementById('manual-photo-btn').addEventListener('click', () => {
+  const plate = normalizePlate(document.getElementById('manual-photo-plate').value);
+  const date = document.getElementById('manual-photo-date').value || todayStr();
+  const note = document.getElementById('manual-photo-note').value.trim();
+  if (!plate) { showStatus('photos-status', 'warn', 'Enter a plate first.'); return; }
+  triggerAttachPhoto(plate, date, '', note);
+});
+
+/* ---------- Event history (for reports) ----------
+   Replays the registry day by day and records every time a plate's status
+   tier changes, so weekly/monthly reports count each notice exactly once
+   (the day it was first triggered) rather than once per walk it persists. */
+function buildEventHistory(logs, contractors, approvals) {
+  const events = [];
+  const prevTier = {};
+  for (let i = 0; i < logs.length; i++) {
+    const d = logs[i].date;
+    const upto = logs.slice(0, i + 1);
+    const { current } = computeRegistry(upto, contractors, approvals);
+    for (const v of current) {
+      const info = stageInfo(v);
+      if (prevTier[v.plate] !== info.tier) {
+        events.push({ plate: v.plate, date: d, tier: info.tier, label: info.label, streak: v.streak });
+        prevTier[v.plate] = info.tier;
+      }
+    }
+  }
+  return events;
+}
+
+/* ---------- PDF: Weekly report ---------- */
+document.getElementById('generate-weekly').addEventListener('click', async () => {
+  if (!window.jspdf) { showStatus('weekly-status', 'warn', 'PDF library failed to load — check your internet connection and try again.'); return; }
+  const anchor = document.getElementById('weekly-anchor').value || todayStr();
+  const monday = mondayOf(anchor);
+  const sunday = addDays(monday, 6);
+
+  const [logs, contractors, approvals, allPhotos] = await Promise.all([
+    getAllLogs(), loadJSON('contractors', []), loadJSON('approvals', []), getAllPhotos()
+  ]);
+  if (logs.length === 0) { showStatus('weekly-status', 'warn', 'No walks logged yet.'); return; }
+
+  const events = buildEventHistory(logs, contractors, approvals);
+  const weekEvents = events.filter(e => e.date >= monday && e.date <= sunday);
+  const notice1 = weekEvents.filter(e => e.tier === '1');
+  const notice2 = weekEvents.filter(e => e.tier === '2');
+  const approvalFlags = weekEvents.filter(e => e.tier === 'approval-flag');
+  const escalated = weekEvents.filter(e => e.tier === 'escalate');
+
+  const uptoSunday = logs.filter(l => l.date <= sunday);
+  const { current } = computeRegistry(uptoSunday, contractors, approvals);
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  let y = 20;
+  const ensure = (needed) => { if (y + needed > 285) { doc.addPage(); y = 20; } };
+
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(18);
+  doc.text('Lot Watch — Weekly Patrol Report', 14, y); y += 8;
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(11);
+  doc.text(`Week: ${monday} to ${sunday}`, 14, y); y += 6;
+  doc.text(`Generated: ${todayStr()}`, 14, y); y += 10;
+
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.text('Summary', 14, y); y += 7;
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(11);
+  [
+    `1st notices issued: ${notice1.length}`,
+    `2nd notices issued: ${notice2.length}`,
+    `Approval-expiry flags raised: ${approvalFlags.length}`,
+    `Vehicles escalated to breach notice: ${escalated.length}`,
+    `Vehicles still on site at week's end: ${current.filter(v => !v.excused).length}`,
+  ].forEach(l => { doc.text(l, 14, y); y += 6; });
+  y += 4;
+
+  if (escalated.length) {
+    ensure(14 + escalated.length * 6);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.text('Vehicles Bridged (Breach Notice Issued)', 14, y); y += 7;
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(11);
+    for (const e of escalated) {
+      ensure(6);
+      doc.text(`${e.plate} — breached on ${e.date} (day ${e.streak})`, 14, y); y += 6;
+    }
+    y += 4;
+  }
+
+  ensure(20);
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.text('Registry Snapshot — End of Week', 14, y); y += 7;
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
+  doc.text('Plate', 14, y); doc.text('Days Parked', 70, y); doc.text('Status', 120, y); y += 5;
+  doc.setLineWidth(0.2); doc.line(14, y, 196, y); y += 4;
+  for (const v of current) {
+    ensure(6);
+    const info = stageInfo(v);
+    doc.text(v.plate, 14, y);
+    doc.text(v.excused ? '—' : String(v.streak), 70, y);
+    doc.text(info.label, 120, y);
+    y += 6;
+  }
+  y += 6;
+
+  const escalatedPlates = [...new Set(escalated.map(e => e.plate))];
+  if (escalatedPlates.length) {
+    ensure(16);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.text('Evidence Photos', 14, y); y += 8;
+    for (const plate of escalatedPlates) {
+      const photos = allPhotos.filter(p => p.plate === plate && p.date >= monday && p.date <= sunday);
+      if (!photos.length) continue;
+      ensure(50);
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.text(plate, 14, y); y += 6;
+      let x = 14;
+      for (const p of photos.slice(0, 4)) {
+        try { doc.addImage(p.dataUrl, 'JPEG', x, y, 40, 40); } catch (e) { /* skip bad image */ }
+        x += 45;
+      }
+      y += 46;
+    }
+  }
+
+  doc.save(`LotWatch-Weekly-${monday}-to-${sunday}.pdf`);
+  showStatus('weekly-status', 'ok', `Weekly report generated for ${monday} – ${sunday}.`);
+});
+
+/* ---------- PDF: Monthly report ---------- */
+document.getElementById('generate-monthly').addEventListener('click', async () => {
+  if (!window.jspdf) { showStatus('monthly-status', 'warn', 'PDF library failed to load — check your internet connection and try again.'); return; }
+  const monthVal = document.getElementById('monthly-anchor').value;
+  if (!monthVal) { showStatus('monthly-status', 'warn', 'Pick a month first.'); return; }
+  const monthStart = monthVal + '-01';
+  const d = new Date(monthStart + 'T00:00:00Z');
+  const monthEnd = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).toISOString().slice(0, 10);
+
+  const [logs, contractors, approvals] = await Promise.all([
+    getAllLogs(), loadJSON('contractors', []), loadJSON('approvals', [])
+  ]);
+  const monthLogs = logs.filter(l => l.date >= monthStart && l.date <= monthEnd);
+  if (monthLogs.length === 0) { showStatus('monthly-status', 'warn', 'No walks logged in that month.'); return; }
+
+  const events = buildEventHistory(logs, contractors, approvals);
+  const monthEvents = events.filter(e => e.date >= monthStart && e.date <= monthEnd);
+  const notice1 = monthEvents.filter(e => e.tier === '1');
+  const notice2 = monthEvents.filter(e => e.tier === '2');
+  const approvalFlags = monthEvents.filter(e => e.tier === 'approval-flag');
+  const escalated = monthEvents.filter(e => e.tier === 'escalate');
+
+  const platePresence = {};
+  for (const entry of monthLogs) {
+    for (const plate of entry.plates) {
+      if (isContractor(plate, contractors)) continue;
+      if (activeApproval(plate, entry.date, approvals)) continue;
+      (platePresence[plate] = platePresence[plate] || []).push(entry.date);
+    }
+  }
+  const occasional = [];
+  for (const plate of Object.keys(platePresence)) {
+    const dates = [...new Set(platePresence[plate])].sort();
+    if (dates.length < OCCASIONAL_MIN_DAYS) continue;
+    let maxRun = 1, run = 1;
+    for (let i = 1; i < dates.length; i++) {
+      if (daysBetween(dates[i-1], dates[i]) === 1) { run += 1; maxRun = Math.max(maxRun, run); }
+      else run = 1;
+    }
+    if (maxRun < ESCALATION_DAY) occasional.push({ plate, totalDays: dates.length, dates, maxRun });
+  }
+  occasional.sort((a, b) => b.totalDays - a.totalDays);
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  let y = 20;
+  const ensure = (needed) => { if (y + needed > 285) { doc.addPage(); y = 20; } };
+
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(18);
+  doc.text('Lot Watch — Monthly Patrol Report', 14, y); y += 8;
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(11);
+  doc.text(`Month: ${monthVal} (${monthStart} to ${monthEnd})`, 14, y); y += 6;
+  doc.text(`Generated: ${todayStr()}`, 14, y); y += 10;
+
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.text('Summary', 14, y); y += 7;
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(11);
+  [
+    `1st notices issued: ${notice1.length}`,
+    `2nd notices issued: ${notice2.length}`,
+    `Approval-expiry flags raised: ${approvalFlags.length}`,
+    `Vehicles escalated to breach notice: ${escalated.length}`,
+    `Occasional parkers flagged for review: ${occasional.length}`,
+  ].forEach(l => { doc.text(l, 14, y); y += 6; });
+  y += 4;
+
+  if (escalated.length) {
+    ensure(14 + escalated.length * 6);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.text('Vehicles Bridged This Month', 14, y); y += 7;
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(11);
+    for (const e of escalated) {
+      ensure(6);
+      doc.text(`${e.plate} — breached on ${e.date} (day ${e.streak})`, 14, y); y += 6;
+    }
+    y += 4;
+  }
+
+  if (occasional.length) {
+    ensure(20);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.text('Occasional Parkers — Flagged for Review', 14, y); y += 7;
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
+    doc.text('Never stayed long enough to trigger a notice, but returned repeatedly through the month.', 14, y, { maxWidth: 180 }); y += 10;
+    for (const o of occasional) {
+      ensure(14);
+      doc.setFont('helvetica', 'bold'); doc.text(`${o.plate} — parked ${o.totalDays} day(s) this month (non-consecutive)`, 14, y); y += 5;
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Dates: ${o.dates.join(', ')}`, 14, y, { maxWidth: 180 }); y += 8;
+    }
+  }
+
+  doc.save(`LotWatch-Monthly-${monthVal}.pdf`);
+  showStatus('monthly-status', 'ok', `Monthly report generated for ${monthVal}.`);
+});
+
 /* ---------- Init ---------- */
 document.getElementById('walk-date').value = todayStr();
+document.getElementById('weekly-anchor').value = todayStr();
+document.getElementById('monthly-anchor').value = todayStr().slice(0,7);
 renderRegistry();
 renderContractors();
 renderApprovals();
