@@ -273,7 +273,9 @@
       <div class="panel">
         <h2>Notice Follow-Ups</h2>
         <p class="sub">Every 1st notice, 2nd notice, breach notice, or approval-expiry flag opens a case here. Come back on your next walk and confirm whether it was actioned — notes stack up over time, and once CCTV has identified the resident you can attach their unit number.</p>
-        <div id="followups-list"><div class="empty">No notices raised yet.</div></div>
+        <button class="btn-ghost" id="cleanup-followups-btn">Clean Up Orphaned Cases</button>
+        <span class="hint" id="cleanup-followups-status"></span>
+        <div id="followups-list" style="margin-top:14px;"><div class="empty">No notices raised yet.</div></div>
       </div>
     </div>
 
@@ -398,9 +400,7 @@
 </div>
 
 <script>
-/* ---------- On-device storage (replaces Claude artifact storage for standalone app) ----------
-   Same get/set/delete/list interface as window.storage, backed by localStorage so data
-   lives on this phone/browser only. */
+/* ---------- On-device storage (replaces Claude artifact storage for standalone app) ---------- */
 window.storage = {
   async get(key) {
     const val = localStorage.getItem('lotwatch:' + key);
@@ -465,7 +465,71 @@ async function saveBuildings(list) { return saveJSON('buildings', list); }
 async function getActiveBuildingId() { return loadJSON('active-building', null); }
 async function setActiveBuildingId(id) { return saveJSON('active-building', id); }
 
+/* ---------- One-time migration: recover pre-building-update data ----------
+   Before building profiles existed, everything was stored under plain keys
+   (log:2026-08-10, contractors, approvals, photo:...). This scans for any
+   data still sitting under those old keys and moves it into a building —
+   the currently active one if you already made one, otherwise a new "My
+   Building" — instead of leaving it stranded and invisible. */
+async function migrateLegacyDataIfNeeded() {
+  const alreadyMigrated = await loadJSON('legacy-migrated', false);
+  if (alreadyMigrated) return;
+
+  const legacyLogsRes = await window.storage.list('log:', false).catch(() => null);
+  const legacyLogKeys = legacyLogsRes ? legacyLogsRes.keys.filter(k => k.startsWith('log:')) : [];
+  const legacyContractors = await window.storage.get('contractors', false).catch(() => null);
+  const legacyApprovals = await window.storage.get('approvals', false).catch(() => null);
+  const legacyPhotosRes = await window.storage.list('photo:', false).catch(() => null);
+  const legacyPhotoKeys = legacyPhotosRes ? legacyPhotosRes.keys.filter(k => k.startsWith('photo:')) : [];
+
+  const hasLegacyData = legacyLogKeys.length > 0 || legacyContractors || legacyApprovals || legacyPhotoKeys.length > 0;
+  if (!hasLegacyData) { await saveJSON('legacy-migrated', true); return; }
+
+  let buildings = await loadBuildings();
+  let target;
+  if (buildings.length === 0) {
+    target = { id: 'b' + Date.now(), name: 'My Building' };
+    buildings = [target];
+    await saveBuildings(buildings);
+    await setActiveBuildingId(target.id);
+  } else {
+    const activeId = await getActiveBuildingId();
+    target = buildings.find(b => b.id === activeId) || buildings[0];
+  }
+  const migKey = (base) => `bld:${target.id}:${base}`;
+
+  for (const key of legacyLogKeys) {
+    const res = await window.storage.get(key, false);
+    if (res) { await window.storage.set(migKey(key), res.value, false); await window.storage.delete(key, false); }
+  }
+  if (legacyContractors) { await window.storage.set(migKey('contractors'), legacyContractors.value, false); await window.storage.delete('contractors', false); }
+  if (legacyApprovals) { await window.storage.set(migKey('approvals'), legacyApprovals.value, false); await window.storage.delete('approvals', false); }
+  for (const key of legacyPhotoKeys) {
+    const res = await window.storage.get(key, false);
+    if (res) { await window.storage.set(migKey(key), res.value, false); await window.storage.delete(key, false); }
+  }
+
+  await saveJSON('legacy-migrated', true);
+  alert(`Recovered ${legacyLogKeys.length} past walk log(s) plus contractors, approvals, and photos from before the buildings update — moved into "${target.name}." Check Walk History to confirm it's all there.`);
+}
+
+/* ---------- Follow-up reconciliation ----------
+   Deleting a walk log should also remove any follow-up case that has no
+   remaining evidence behind it — otherwise a case can keep flagging a
+   plate that no longer appears in any log at all. */
+async function reconcileFollowups(logs) {
+  const platesInLogs = new Set();
+  for (const entry of logs) for (const p of entry.plates) platesInLogs.add(p);
+  const followups = await getAllFollowups();
+  for (const fu of followups) {
+    if (!platesInLogs.has(fu.plate)) {
+      await window.storage.delete(nsKey('followup:' + fu.plate), false);
+    }
+  }
+}
+
 async function initApp() {
+  await migrateLegacyDataIfNeeded();
   const buildings = await loadBuildings();
   if (buildings.length === 0) {
     document.getElementById('building-setup-gate').style.display = 'block';
@@ -941,10 +1005,13 @@ async function renderRegistry() {
     historyList.innerHTML = html;
     historyList.querySelectorAll('[data-delete-date]').forEach(btn => {
       btn.addEventListener('click', async () => {
-        if (confirm(`Delete the walk logged on ${btn.dataset.deleteDate}? This will recompute all streaks.`)) {
+        if (confirm(`Delete the walk logged on ${btn.dataset.deleteDate}? This will recompute all streaks and clean up any follow-up cases with no remaining evidence.`)) {
           await window.storage.delete(nsKey('log:' + btn.dataset.deleteDate), false);
+          const remainingLogs = await getAllLogs();
+          await reconcileFollowups(remainingLogs);
           await renderRegistry();
-          showStatus('status-msg', 'ok', `Deleted walk for ${btn.dataset.deleteDate}.`);
+          await renderFollowups();
+          showStatus('status-msg', 'ok', `Deleted walk for ${btn.dataset.deleteDate} and cleared any orphaned follow-up cases.`);
         }
       });
     });
@@ -1491,6 +1558,17 @@ document.getElementById('generate-report').addEventListener('click', async () =>
   if (logs.length === 0) { showStatus('report-status', 'warn', 'No walks logged yet.'); return; }
   await buildReportPdf(start, end);
   showStatus('report-status', 'ok', `Report generated for ${start} – ${end}.`);
+});
+
+document.getElementById('cleanup-followups-btn').addEventListener('click', async () => {
+  const before = (await getAllFollowups()).length;
+  const logs = await getAllLogs();
+  await reconcileFollowups(logs);
+  const after = (await getAllFollowups()).length;
+  const removed = before - after;
+  document.getElementById('cleanup-followups-status').textContent =
+    removed > 0 ? `Removed ${removed} case${removed === 1 ? '' : 's'} with no matching walk data.` : 'No orphaned cases found — everything checks out.';
+  await renderFollowups();
 });
 
 /* ---------- Init ---------- */

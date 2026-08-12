@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lotwatch-cache-v3';
+const CACHE_NAME = 'lotwatch-cache-v4';
 const ASSETS = [
   './index.html',
   './manifest.json',
@@ -19,7 +19,6 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // jsPDF loads from a CDN — let those requests hit the network normally.
   if (event.request.url.includes('cdnjs.cloudflare.com')) return;
   event.respondWith(
     caches.match(event.request).then((cached) => cached || fetch(event.request).catch(() => caches.match('./index.html')))
