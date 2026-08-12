@@ -557,6 +557,7 @@ async function initApp() {
   document.getElementById('walk-date').value = todayStr();
   document.getElementById('manual-photo-date').value = todayStr();
   document.getElementById('approval-start').value = todayStr();
+  await loadWalkForEditing();
   applyPreset('week');
   await renderAll();
 }
@@ -987,6 +988,8 @@ async function renderFollowups() {
       await renderFollowups();
     });
   });
+
+  await refreshReportPreviewIfOpen();
 }
 
 /* ---------- Render: Walk view ---------- */
@@ -1022,11 +1025,19 @@ async function renderRegistry() {
       html += `<div class="log-row">
         <span class="date">${entry.date}</span>
         <span class="count">${entry.plates.length} vehicle${entry.plates.length === 1 ? '' : 's'}
-          <button class="btn-danger" data-delete-date="${entry.date}" style="margin-left:10px;">Delete</button>
+          <button class="btn-ghost" data-edit-date="${entry.date}" style="margin-left:10px;padding:5px 9px;font-size:10px;">Edit</button>
+          <button class="btn-danger" data-delete-date="${entry.date}" style="margin-left:6px;">Delete</button>
         </span>
       </div>`;
     }
     historyList.innerHTML = html;
+    historyList.querySelectorAll('[data-edit-date]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        document.getElementById('walk-date').value = btn.dataset.editDate;
+        await loadWalkForEditing();
+        document.getElementById('walk-view').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
     historyList.querySelectorAll('[data-delete-date]').forEach(btn => {
       btn.addEventListener('click', async () => {
         if (confirm(`Delete the walk logged on ${btn.dataset.deleteDate}? This will recompute all streaks and clean up any follow-up cases with no remaining evidence.`)) {
@@ -1040,6 +1051,7 @@ async function renderRegistry() {
       });
     });
   }
+  await refreshReportPreviewIfOpen();
 }
 
 function renderResults(current, left) {
@@ -1098,6 +1110,30 @@ function renderResults(current, left) {
   })();
 }
 
+/* ---------- Edit a previously logged walk ----------
+   Picking a date that already has a walk loads its plates into the box for
+   editing (add/remove lines, then resubmit) instead of starting blank and
+   risking an accidental full overwrite. Every downstream calculation —
+   registry, follow-ups, the report preview — recomputes from scratch off
+   the full log each time, so an edit to a past date correctly ripples
+   through every later date's streak automatically. */
+async function loadWalkForEditing() {
+  const date = document.getElementById('walk-date').value;
+  const textarea = document.getElementById('rego-input');
+  if (!date) return;
+  const res = await window.storage.get(nsKey('log:' + date), false).catch(() => null);
+  if (res) {
+    const plates = JSON.parse(res.value);
+    textarea.value = plates.join('\n');
+    showStatus('status-msg', 'ok', `Loaded the existing walk for ${date} (${plates.length} vehicle${plates.length === 1 ? '' : 's'}) — edit the list and press Submit Walk to update it.`);
+  } else {
+    textarea.value = '';
+    document.getElementById('status-msg').classList.remove('show');
+  }
+  renderRegoPreview();
+}
+document.getElementById('walk-date').addEventListener('change', loadWalkForEditing);
+
 document.getElementById('submit-walk').addEventListener('click', async () => {
   const dateInput = document.getElementById('walk-date');
   const date = dateInput.value;
@@ -1109,7 +1145,8 @@ document.getElementById('submit-walk').addEventListener('click', async () => {
   try {
     const existing = await window.storage.get(nsKey('log:' + date), false).catch(() => null);
     if (existing) {
-      if (!confirm(`A walk for ${date} already exists (${JSON.parse(existing.value).length} plates). Overwrite it?`)) return;
+      const existingCount = JSON.parse(existing.value).length;
+      if (!confirm(`Update the walk for ${date}? It currently has ${existingCount} vehicle(s) on record — this replaces them with what's in the box now (${plates.length} vehicle(s)), and every report/follow-up depending on that date will recompute automatically.`)) return;
     }
   } catch (e) { /* no existing entry */ }
 
@@ -1367,7 +1404,17 @@ async function updatePreview() {
       <div class="preview-stat"><b>${data.escalated.length}</b><span>Breach notices</span></div>
       <div class="preview-stat"><b>${data.occasional.length}</b><span>Occasional parkers</span></div>
       <div class="preview-stat"><b>${data.approvedPlates.length}</b><span>Approved vehicles</span></div>
-    </div>`;
+    </div>
+    <div class="hint" style="margin-top:6px;">Live as of your last change — updates automatically whenever a walk, notice, or follow-up changes.</div>`;
+}
+
+/* Re-runs the report preview whenever underlying data changes, as long as a
+   range is already picked — called from renderRegistry() and renderFollowups()
+   so it stays current without needing to be wired into every single action. */
+async function refreshReportPreviewIfOpen() {
+  const start = document.getElementById('report-start').value;
+  const end = document.getElementById('report-end').value;
+  if (start && end) await updatePreview();
 }
 
 /* ---------- PDF table drawing helpers ---------- */
