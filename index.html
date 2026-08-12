@@ -221,6 +221,7 @@
     </div>
     <button class="btn-ghost" id="new-building-btn">+ New Building</button>
     <button class="btn-ghost" id="manage-buildings-btn">Manage</button>
+    <button class="btn-ghost" id="check-legacy-btn" title="If you were on the app before the Buildings update, this checks for and recovers any old data.">Check for Legacy Data</button>
   </div>
 
   <nav class="tabs" id="main-tabs" style="display:none;">
@@ -429,7 +430,7 @@ window.storage = {
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('service-worker.js').catch(() => {});
+    navigator.serviceWorker.register('service-worker.js').then((reg) => { reg.update().catch(() => {}); }).catch(() => {});
   });
 }
 
@@ -471,9 +472,9 @@ async function setActiveBuildingId(id) { return saveJSON('active-building', id);
    data still sitting under those old keys and moves it into a building —
    the currently active one if you already made one, otherwise a new "My
    Building" — instead of leaving it stranded and invisible. */
-async function migrateLegacyDataIfNeeded() {
+async function migrateLegacyDataIfNeeded(force) {
   const alreadyMigrated = await loadJSON('legacy-migrated', false);
-  if (alreadyMigrated) return;
+  if (alreadyMigrated && !force) return { skipped: true };
 
   const legacyLogsRes = await window.storage.list('log:', false).catch(() => null);
   const legacyLogKeys = legacyLogsRes ? legacyLogsRes.keys.filter(k => k.startsWith('log:')) : [];
@@ -483,7 +484,7 @@ async function migrateLegacyDataIfNeeded() {
   const legacyPhotoKeys = legacyPhotosRes ? legacyPhotosRes.keys.filter(k => k.startsWith('photo:')) : [];
 
   const hasLegacyData = legacyLogKeys.length > 0 || legacyContractors || legacyApprovals || legacyPhotoKeys.length > 0;
-  if (!hasLegacyData) { await saveJSON('legacy-migrated', true); return; }
+  if (!hasLegacyData) { await saveJSON('legacy-migrated', true); return { recovered: 0 }; }
 
   let buildings = await loadBuildings();
   let target;
@@ -510,7 +511,7 @@ async function migrateLegacyDataIfNeeded() {
   }
 
   await saveJSON('legacy-migrated', true);
-  alert(`Recovered ${legacyLogKeys.length} past walk log(s) plus contractors, approvals, and photos from before the buildings update — moved into "${target.name}." Check Walk History to confirm it's all there.`);
+  return { recovered: legacyLogKeys.length, building: target.name, contractors: !!legacyContractors, approvals: !!legacyApprovals, photos: legacyPhotoKeys.length };
 }
 
 /* ---------- Follow-up reconciliation ----------
@@ -529,7 +530,10 @@ async function reconcileFollowups(logs) {
 }
 
 async function initApp() {
-  await migrateLegacyDataIfNeeded();
+  const migResult = await migrateLegacyDataIfNeeded();
+  if (migResult && migResult.recovered > 0) {
+    alert(`Recovered ${migResult.recovered} past walk log(s) plus contractors, approvals, and photos from before the buildings update — moved into "${migResult.building}." Check Walk History to confirm it's all there.`);
+  }
   const buildings = await loadBuildings();
   if (buildings.length === 0) {
     document.getElementById('building-setup-gate').style.display = 'block';
@@ -614,6 +618,16 @@ document.getElementById('manage-buildings-btn').addEventListener('click', async 
     await renderAll();
   } else {
     alert('Type "rename N Name" or "delete N".');
+  }
+});
+
+document.getElementById('check-legacy-btn').addEventListener('click', async () => {
+  const result = await migrateLegacyDataIfNeeded(true);
+  if (result.recovered > 0) {
+    alert(`Recovered ${result.recovered} past walk log(s)${result.contractors ? ', contractors' : ''}${result.approvals ? ', approvals' : ''}${result.photos ? `, ${result.photos} photo(s)` : ''} — moved into "${result.building}." Check Walk History to confirm it's all there.`);
+    await renderAll();
+  } else {
+    alert('No leftover pre-buildings data found on this device.');
   }
 });
 
@@ -885,6 +899,7 @@ function followupCardHTML(r) {
       <span class="plate">${r.plate}</span>
       <span class="fu-label">${r.label} — flagged ${r.firstFlaggedDate}</span>
       <span class="pill ${r.status === 'done' ? 'pill-done' : 'pill-pending'}">${r.status === 'done' ? 'Actioned ' + r.doneDate : 'Pending'}</span>
+      <button class="btn-danger fu-delete" data-plate="${r.plate}" title="Permanently delete this case">Delete Case</button>
     </div>
     <div class="fu-unit">
       <label>Unit number (post-CCTV identification)</label>
@@ -927,6 +942,15 @@ async function renderFollowups() {
       await saveJSON(key, rec);
       btn.textContent = 'Saved ✓';
       setTimeout(() => { btn.textContent = 'Save Unit'; }, 1500);
+    });
+  });
+
+  el.querySelectorAll('.fu-delete').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const plate = btn.dataset.plate;
+      if (!confirm(`Permanently delete the follow-up case for ${plate}? This removes all its notes and photo, and can't be undone.`)) return;
+      await window.storage.delete(nsKey('followup:' + plate), false);
+      await renderFollowups();
     });
   });
 
