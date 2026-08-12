@@ -39,16 +39,20 @@
     min-height: 100vh;
     padding: 24px 16px 60px;
   }
-  .wrap { max-width: 880px; margin: 0 auto; }
+  .wrap { max-width: 900px; margin: 0 auto; }
 
   header.masthead {
     display: flex; align-items: baseline; justify-content: space-between;
     border-bottom: 3px dashed var(--amber);
-    padding-bottom: 14px; margin-bottom: 22px; flex-wrap: wrap; gap: 8px;
+    padding-bottom: 14px; margin-bottom: 18px; flex-wrap: wrap; gap: 8px;
   }
   header.masthead h1 { font-family: var(--display); font-weight: 800; letter-spacing: 0.5px; font-size: 30px; margin: 0; text-transform: uppercase; }
   header.masthead h1 span { color: var(--amber); }
   header.masthead .tagline { font-family: var(--mono); font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+
+  .building-bar { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 16px; background: var(--asphalt-2); border: 1px solid #34383f; border-radius: 4px; padding: 12px 16px; }
+  .building-bar .field { flex: 1; min-width: 160px; margin-bottom: 0; }
+  .building-bar select { width: 100%; background: #14161a; border: 1px solid #3a3f47; color: var(--line-white); border-radius: 3px; padding: 9px 10px; font-family: var(--mono); font-size: 13px; }
 
   nav.tabs { display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; }
   nav.tabs button {
@@ -57,6 +61,7 @@
     padding: 9px 14px; border-radius: 3px; cursor: pointer;
   }
   nav.tabs button.active { background: var(--amber); color: #1c1e22; border-color: var(--amber); font-weight: 700; }
+  .tab-badge { background: var(--red-notice); color: #fff; border-radius: 8px; font-size: 10px; padding: 1px 6px; margin-left: 5px; }
 
   .view { display: none; }
   .view.active { display: block; }
@@ -74,7 +79,7 @@
   input[type="date"], input[type="month"] { max-width: 220px; }
   .field { margin-bottom: 14px; }
   .hint { font-size: 12px; color: var(--muted); margin-top: 4px; }
-  .row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
   .row .field { flex: 1; min-width: 150px; }
 
   button.action {
@@ -86,14 +91,19 @@
   .btn-primary:hover { filter: brightness(1.08); }
   .btn-blue { background: var(--blue-note); color: #0e1c24; }
   .btn-blue:hover { filter: brightness(1.1); }
-  .btn-ghost { background: transparent; color: var(--muted); border: 1px solid #3a3f47; padding: 8px 14px; font-size: 11px; }
+  .btn-ghost { background: transparent; color: var(--muted); border: 1px solid #3a3f47; padding: 8px 14px; font-size: 11px; border-radius: 3px; cursor: pointer; font-family: var(--display); text-transform: uppercase; letter-spacing: 0.5px; }
+  .btn-ghost:hover { color: var(--line-white); border-color: var(--muted); }
   .btn-danger { background: transparent; color: var(--red-notice); border: 1px solid var(--red-notice); padding: 6px 10px; font-size: 10px; border-radius: 3px; cursor: pointer; }
   .btn-mini {
     background: #14161a; color: var(--amber); border: 1px solid var(--amber-deep); font-size: 10.5px;
-    padding: 6px 10px; border-radius: 3px; cursor: pointer; font-family: var(--display);
+    padding: 7px 11px; border-radius: 3px; cursor: pointer; font-family: var(--display);
     text-transform: uppercase; letter-spacing: 0.5px;
   }
   .btn-mini:hover { background: var(--amber); color: #1c1e22; }
+  .btn-mini.mini-green { border-color: var(--green-ok); color: #8fd39e; }
+  .btn-mini.mini-green:hover { background: var(--green-ok); color: #0e1c11; }
+  .btn-mini.mini-red { border-color: var(--red-notice); color: #e58f7f; }
+  .btn-mini.mini-red:hover { background: var(--red-notice); color: #fff; }
 
   .status-msg { font-size: 13px; margin-top: 10px; padding: 8px 10px; border-radius: 3px; display: none; }
   .status-msg.show { display: block; }
@@ -117,7 +127,7 @@
   .ticket .info .detail { font-size: 12.5px; color: #55524a; margin-top: 2px; }
   .ticket .days { font-family: var(--mono); font-size: 11px; color: var(--muted); text-align: right; min-width: 70px; }
   .ticket .days b { display: block; font-size: 20px; color: #201e1a; }
-  .ticket-actions { flex-basis: 100%; display: flex; align-items: center; gap: 10px; margin-top: 4px; }
+  .ticket-actions { flex-basis: 100%; display: flex; align-items: center; gap: 10px; margin-top: 4px; flex-wrap: wrap; }
   .ticket-actions .photo-note { font-size: 11px; color: #6b6a5f; }
   .left-section { background: #2a2e26; border-left: 6px solid var(--muted); }
   .left-section .plate { background: #3a3f37; }
@@ -134,6 +144,8 @@
   .pill-exempt { background: rgba(76,134,176,0.2); color: #8fc4e8; }
   .pill-approved { background: rgba(61,122,156,0.25); color: #a3d3f0; }
   .pill-approval-flag { background: rgba(176,106,31,0.25); color: #e8b46a; }
+  .pill-pending { background: rgba(201,127,26,0.22); color: var(--amber); }
+  .pill-done { background: rgba(79,138,91,0.2); color: #8fd39e; }
 
   .empty { color: var(--muted); font-size: 13px; padding: 10px 0; }
   .log-row, .mini-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #34383f; font-size: 13px; gap: 10px; flex-wrap: wrap; }
@@ -148,6 +160,31 @@
   .photo-thumb { width: 96px; height: 96px; object-fit: cover; border-radius: 4px; border: 1px solid #3a3f47; }
   .photo-card .meta { font-size: 10px; color: var(--muted); margin: 5px 0; }
 
+  .followup-card { background: var(--paper); color: #201e1a; border-radius: 4px; padding: 14px 16px; margin-bottom: 12px; border-left: 6px solid var(--amber-deep); }
+  .followup-card.done { border-left-color: var(--green-ok); opacity: 0.88; }
+  .fu-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+  .fu-head .plate { font-family: var(--mono); font-weight: 700; background: #1c1e22; color: var(--line-white); padding: 5px 9px; border-radius: 3px; }
+  .fu-head .fu-label { font-size: 12px; color: #55524a; flex: 1; min-width: 140px; }
+  .fu-unit { margin-bottom: 10px; }
+  .fu-unit label { font-size: 10.5px; margin-bottom: 3px; }
+  .fu-unit input { background: #fff; color: #201e1a; border: 1px solid #ccc; }
+  .fu-notes { background: #fff; border: 1px solid #e3e0d6; border-radius: 3px; padding: 8px 10px; margin-bottom: 10px; max-height: 150px; overflow-y: auto; }
+  .note-line { font-size: 12px; padding: 4px 0; border-bottom: 1px dashed #ddd; }
+  .note-line:last-child { border-bottom: none; }
+  .note-date { font-family: var(--mono); color: var(--amber-deep); font-weight: 700; margin-right: 6px; }
+  .fu-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .fu-actions input[type=text] { background: #fff; color: #201e1a; border: 1px solid #ccc; }
+  .fu-actions .field { flex: 1; min-width: 180px; margin-bottom: 0; }
+  .fu-thumb { width: 60px; height: 60px; object-fit: cover; border-radius: 4px; border: 1px solid #ccc; margin-top: 8px; }
+
+  .preview-grid { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+  .preview-stat { background: #14161a; border: 1px solid #3a3f47; border-radius: 4px; padding: 10px 14px; text-align: center; min-width: 100px; }
+  .preview-stat b { display: block; font-size: 22px; color: var(--amber); font-family: var(--mono); }
+  .preview-stat span { font-size: 9.5px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .preset-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+  .preset-row button.active { background: var(--amber); color: #1c1e22; }
+
   footer { text-align: center; color: var(--muted); font-size: 11px; margin-top: 30px; font-family: var(--mono); }
 </style>
 </head>
@@ -161,167 +198,209 @@
     </div>
   </header>
 
-  <nav class="tabs">
+  <!-- BUILDING SETUP GATE (shown only if no buildings exist yet) -->
+  <div class="panel" id="building-setup-gate" style="display:none;">
+    <h2>Create Your First Building</h2>
+    <p class="sub">Lot Watch keeps each building's walks, contractors, approvals, and reports completely separate. This is a local, on-device profile — not a secure login. Anyone using this browser/device can switch between buildings. If you need real login for multiple staff across devices, that needs a proper backend — worth a separate conversation if it matters to you.</p>
+    <div class="field">
+      <label for="first-building-name">Building name</label>
+      <input type="text" id="first-building-name" placeholder="e.g. 12 Harbour Street">
+    </div>
+    <button class="action btn-primary" id="create-first-building">Create Building &amp; Start</button>
+  </div>
+
+  <!-- BUILDING BAR -->
+  <div class="building-bar" id="building-bar" style="display:none;">
+    <div class="field">
+      <label for="building-select">Building</label>
+      <select id="building-select"></select>
+    </div>
+    <div class="field">
+      <label for="manager-name-input">Prepared by (appears on reports)</label>
+      <input type="text" id="manager-name-input" placeholder="Your name">
+    </div>
+    <button class="btn-ghost" id="new-building-btn">+ New Building</button>
+    <button class="btn-ghost" id="manage-buildings-btn">Manage</button>
+  </div>
+
+  <nav class="tabs" id="main-tabs" style="display:none;">
     <button class="tab-btn active" data-view="walk-view">Daily Walk</button>
+    <button class="tab-btn" data-view="followups-view">Follow-Ups<span class="tab-badge" id="followups-badge" style="display:none;"></span></button>
     <button class="tab-btn" data-view="contractors-view">Contractors &amp; Exempt</button>
     <button class="tab-btn" data-view="approvals-view">Special Approvals</button>
     <button class="tab-btn" data-view="photos-view">Photos</button>
     <button class="tab-btn" data-view="reports-view">Reports</button>
   </nav>
 
-  <!-- WALK VIEW -->
-  <div class="view active" id="walk-view">
-    <div class="panel">
-      <h2>Log Today's Walk</h2>
-      <div class="field">
-        <label for="walk-date">Date of walk</label>
-        <input type="date" id="walk-date">
-      </div>
-      <div class="field">
-        <label for="rego-input">Plates currently parked (one per line)</label>
-        <textarea id="rego-input" placeholder="ABC123&#10;XYZ789&#10;7QW 456"></textarea>
-        <div class="hint">Include contractor and approved plates too — they're tracked but never notified. Leaving a plate off means it's recorded as having left the lot.</div>
-      </div>
-      <button class="action btn-primary" id="submit-walk">Submit Walk</button>
-      <div class="status-msg" id="status-msg"></div>
-    </div>
+  <div id="main-content" style="display:none;">
 
-    <div class="panel" id="results-panel" style="display:none;">
-      <h2>Result of This Walk</h2>
-      <div id="results-list"></div>
-    </div>
-
-    <div class="panel">
-      <h2>Current Registry — Vehicles On Site</h2>
-      <div id="registry-table"><div class="empty">No walks logged yet.</div></div>
-    </div>
-
-    <div class="panel">
-      <h2>Walk History</h2>
-      <div id="history-list"><div class="empty">No walks logged yet.</div></div>
-    </div>
-  </div>
-
-  <!-- CONTRACTORS VIEW -->
-  <div class="view" id="contractors-view">
-    <div class="panel">
-      <h2>Add Contractor / Exempt Vehicle</h2>
-      <p class="sub">Plates on this list are monitored on every walk but never receive a notice — days-on-site still shows, but the status always reads "Exempt".</p>
-      <div class="row">
+    <!-- WALK VIEW -->
+    <div class="view active" id="walk-view">
+      <div class="panel">
+        <h2>Log Today's Walk</h2>
         <div class="field">
-          <label for="contractor-plate">Plate</label>
-          <input type="text" id="contractor-plate" placeholder="ABC123">
-        </div>
-        <div class="field" style="flex:2;">
-          <label for="contractor-note">Who they are</label>
-          <input type="text" id="contractor-note" placeholder="e.g. Sparkwell Electrical — site contractor">
-        </div>
-      </div>
-      <button class="action btn-blue" id="add-contractor">Add to Exempt List</button>
-      <div class="status-msg" id="contractor-status"></div>
-    </div>
-    <div class="panel">
-      <h2>Current Exempt List</h2>
-      <div id="contractor-list"><div class="empty">No contractors added yet.</div></div>
-    </div>
-  </div>
-
-  <!-- APPROVALS VIEW -->
-  <div class="view" id="approvals-view">
-    <div class="panel">
-      <h2>Grant a Special Approval</h2>
-      <p class="sub">Approve a plate to park for a fixed date range. While the range is active it's exempt from notices. The day after it expires, if the car is still on site, it's immediately flagged to notify the resident to remove it.</p>
-      <div class="row">
-        <div class="field">
-          <label for="approval-plate">Plate</label>
-          <input type="text" id="approval-plate" placeholder="XYZ789">
-        </div>
-        <div class="field" style="flex:2;">
-          <label for="approval-note">Reason / who approved it</label>
-          <input type="text" id="approval-note" placeholder="e.g. Visiting family — approved by strata manager">
-        </div>
-      </div>
-      <div class="row">
-        <div class="field">
-          <label for="approval-start">Start date</label>
-          <input type="date" id="approval-start">
+          <label for="walk-date">Date of walk</label>
+          <input type="date" id="walk-date">
         </div>
         <div class="field">
-          <label for="approval-end">End date</label>
-          <input type="date" id="approval-end">
+          <label for="rego-input">Plates currently parked (one per line)</label>
+          <textarea id="rego-input" placeholder="ABC123&#10;XYZ789&#10;7QW 456"></textarea>
+          <div class="hint">Include contractor and approved plates too — they're tracked but never notified. Leaving a plate off means it's recorded as having left the lot.</div>
         </div>
+        <div id="rego-preview"></div>
+        <button class="action btn-primary" id="submit-walk">Submit Walk</button>
+        <div class="status-msg" id="status-msg"></div>
       </div>
-      <button class="action btn-blue" id="add-approval">Grant Approval</button>
-      <div class="status-msg" id="approval-status"></div>
-    </div>
-    <div class="panel">
-      <h2>Current &amp; Past Approvals</h2>
-      <div id="approval-list"><div class="empty">No approvals added yet.</div></div>
-    </div>
-  </div>
 
-  <!-- PHOTOS VIEW -->
-  <div class="view" id="photos-view">
-    <div class="panel">
-      <h2>Add a Photo</h2>
-      <p class="sub">Attach evidence to any plate — photos taken from a notice ticket land here automatically too. Photos are embedded into weekly and monthly PDF reports.</p>
-      <div class="row">
+      <div class="panel" id="results-panel" style="display:none;">
+        <h2>Result of This Walk</h2>
+        <div id="results-list"></div>
+      </div>
+
+      <div class="panel">
+        <h2>Current Registry — Vehicles On Site</h2>
+        <div id="registry-table"><div class="empty">No walks logged yet.</div></div>
+      </div>
+
+      <div class="panel">
+        <h2>Walk History</h2>
+        <div id="history-list"><div class="empty">No walks logged yet.</div></div>
+      </div>
+    </div>
+
+    <!-- FOLLOW-UPS VIEW -->
+    <div class="view" id="followups-view">
+      <div class="panel">
+        <h2>Notice Follow-Ups</h2>
+        <p class="sub">Every 1st notice, 2nd notice, breach notice, or approval-expiry flag opens a case here. Come back on your next walk and confirm whether it was actioned — notes stack up over time, and once CCTV has identified the resident you can attach their unit number.</p>
+        <div id="followups-list"><div class="empty">No notices raised yet.</div></div>
+      </div>
+    </div>
+
+    <!-- CONTRACTORS VIEW -->
+    <div class="view" id="contractors-view">
+      <div class="panel">
+        <h2>Add Contractor / Exempt Vehicle</h2>
+        <p class="sub">Plates on this list are monitored on every walk but never receive a notice — days-on-site still shows, but the status always reads "Exempt".</p>
+        <div class="row">
+          <div class="field">
+            <label for="contractor-plate">Plate</label>
+            <input type="text" id="contractor-plate" placeholder="ABC123">
+          </div>
+          <div class="field" style="flex:2;">
+            <label for="contractor-note">Who they are</label>
+            <input type="text" id="contractor-note" placeholder="e.g. Sparkwell Electrical — site contractor">
+          </div>
+        </div>
+        <button class="action btn-blue" id="add-contractor">Add to Exempt List</button>
+        <div class="status-msg" id="contractor-status"></div>
+      </div>
+      <div class="panel">
+        <h2>Current Exempt List</h2>
+        <div id="contractor-list"><div class="empty">No contractors added yet.</div></div>
+      </div>
+    </div>
+
+    <!-- APPROVALS VIEW -->
+    <div class="view" id="approvals-view">
+      <div class="panel">
+        <h2>Grant a Special Approval</h2>
+        <p class="sub">Approve a plate to park for a fixed date range. While the range is active it's exempt from notices. The day after it expires, if the car is still on site, it's immediately flagged to notify the resident to remove it.</p>
+        <div class="row">
+          <div class="field">
+            <label for="approval-plate">Plate</label>
+            <input type="text" id="approval-plate" placeholder="XYZ789">
+          </div>
+          <div class="field" style="flex:2;">
+            <label for="approval-note">Reason / who approved it</label>
+            <input type="text" id="approval-note" placeholder="e.g. Visiting family — approved by strata manager">
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="approval-start">Start date</label>
+            <input type="date" id="approval-start">
+          </div>
+          <div class="field">
+            <label for="approval-end">End date</label>
+            <input type="date" id="approval-end">
+          </div>
+        </div>
+        <button class="action btn-blue" id="add-approval">Grant Approval</button>
+        <div class="status-msg" id="approval-status"></div>
+      </div>
+      <div class="panel">
+        <h2>Current &amp; Past Approvals</h2>
+        <div id="approval-list"><div class="empty">No approvals added yet.</div></div>
+      </div>
+    </div>
+
+    <!-- PHOTOS VIEW -->
+    <div class="view" id="photos-view">
+      <div class="panel">
+        <h2>Add a Photo</h2>
+        <p class="sub">Attach evidence to any plate — photos taken from a notice ticket land here automatically too.</p>
+        <div class="row">
+          <div class="field">
+            <label for="manual-photo-plate">Plate</label>
+            <input type="text" id="manual-photo-plate" placeholder="ABC123">
+          </div>
+          <div class="field">
+            <label for="manual-photo-date">Date</label>
+            <input type="date" id="manual-photo-date">
+          </div>
+        </div>
         <div class="field">
-          <label for="manual-photo-plate">Plate</label>
-          <input type="text" id="manual-photo-plate" placeholder="ABC123">
+          <label for="manual-photo-note">Note (optional)</label>
+          <input type="text" id="manual-photo-note" placeholder="e.g. Notice placed under wiper">
         </div>
-        <div class="field">
-          <label for="manual-photo-date">Date</label>
-          <input type="date" id="manual-photo-date">
-        </div>
+        <button class="action btn-blue" id="manual-photo-btn">Choose / Take Photo</button>
+        <div class="status-msg" id="photos-status"></div>
       </div>
-      <div class="field">
-        <label for="manual-photo-note">Note (optional)</label>
-        <input type="text" id="manual-photo-note" placeholder="e.g. Notice placed under wiper">
+      <div class="panel">
+        <h2>All Photos</h2>
+        <div id="photos-list"><div class="empty">No photos captured yet.</div></div>
       </div>
-      <button class="action btn-blue" id="manual-photo-btn">Choose / Take Photo</button>
-      <div class="status-msg" id="photos-status"></div>
-    </div>
-    <div class="panel">
-      <h2>All Photos</h2>
-      <div id="photos-list"><div class="empty">No photos captured yet.</div></div>
-    </div>
-  </div>
-
-  <!-- REPORTS VIEW -->
-  <div class="view" id="reports-view">
-    <div class="panel">
-      <h2>Weekly Report</h2>
-      <p class="sub">Pick any date and it generates a PDF for that Monday–Sunday week: notices issued, vehicles bridged, an end-of-week snapshot, and evidence photos. The database keeps accumulating — nothing resets when you generate a report.</p>
-      <div class="field">
-        <label for="weekly-anchor">Any date within the target week</label>
-        <input type="date" id="weekly-anchor">
-      </div>
-      <button class="action btn-primary" id="generate-weekly">Generate Weekly PDF</button>
-      <div class="status-msg" id="weekly-status"></div>
     </div>
 
-    <div class="panel">
-      <h2>Monthly Report</h2>
-      <p class="sub">Covers a full calendar month: all notices and breaches, plus "occasional parkers" — plates that keep returning on non-consecutive days often enough to be worth flagging, even though they never stayed long enough to trigger a notice.</p>
-      <div class="field">
-        <label for="monthly-anchor">Month</label>
-        <input type="month" id="monthly-anchor">
+    <!-- REPORTS VIEW -->
+    <div class="view" id="reports-view">
+      <div class="panel">
+        <h2>Generate Report</h2>
+        <p class="sub">Pick a range — the report covers every walk, notice, follow-up note, unit number, and photo logged within it. The underlying log never resets; reports just slice a window out of it.</p>
+        <div class="preset-row" id="range-presets">
+          <button class="btn-mini" data-preset="week">This Week</button>
+          <button class="btn-mini" data-preset="month">This Month</button>
+          <button class="btn-mini" data-preset="quarter">This Quarter</button>
+          <button class="btn-mini" data-preset="year">This Year</button>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="report-start">From</label>
+            <input type="date" id="report-start">
+          </div>
+          <div class="field">
+            <label for="report-end">To</label>
+            <input type="date" id="report-end">
+          </div>
+        </div>
+        <div id="report-preview"></div>
+        <button class="action btn-primary" id="generate-report" style="margin-top:14px;">Generate Report PDF</button>
+        <div class="status-msg" id="report-status"></div>
       </div>
-      <button class="action btn-primary" id="generate-monthly">Generate Monthly PDF</button>
-      <div class="status-msg" id="monthly-status"></div>
     </div>
+
   </div>
 
   <input type="file" accept="image/*" capture="environment" id="photo-file-input" style="display:none;">
-  <footer>DATA STORED PRIVATELY FOR THIS ACCOUNT · LOT WATCH</footer>
+  <input type="file" accept="image/*" capture="environment" id="followup-photo-input" style="display:none;">
+  <footer>DATA STORED PRIVATELY, PER BUILDING, ON THIS DEVICE · LOT WATCH</footer>
 </div>
 
 <script>
 /* ---------- On-device storage (replaces Claude artifact storage for standalone app) ----------
    Same get/set/delete/list interface as window.storage, backed by localStorage so data
-   lives on this phone/browser only. Photos are base64 strings, so this can grow — most
-   browsers allow 5–10MB of localStorage per origin, which is thousands of compressed photos. */
+   lives on this phone/browser only. */
 window.storage = {
   async get(key) {
     const val = localStorage.getItem('lotwatch:' + key);
@@ -355,8 +434,8 @@ if ('serviceWorker' in navigator) {
 }
 
 /* ---------- Config ---------- */
-const ESCALATION_DAY = 4;       // day at which a normal overstay hits "escalate: breach notice"
-const OCCASIONAL_MIN_DAYS = 4;  // days present in a month (non-consecutive) before flagging as an occasional parker
+const ESCALATION_DAY = 4;
+const OCCASIONAL_MIN_DAYS = 4;
 const NOTIFIABLE_TIERS = ['1', '2', 'escalate', 'approval-flag'];
 
 /* ---------- Date helpers ---------- */
@@ -366,6 +445,129 @@ function dayLabel(n) { return n === 1 ? '1 day' : n + ' days'; }
 function addDays(dateStr, n) { const d = new Date(dateStr + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0,10); }
 function daysBetween(d1, d2) { return Math.round((new Date(d2 + 'T00:00:00Z') - new Date(d1 + 'T00:00:00Z')) / 86400000); }
 function mondayOf(dateStr) { const d = new Date(dateStr + 'T00:00:00Z'); const day = d.getUTCDay(); const diff = (day === 0 ? -6 : 1 - day); return addDays(dateStr, diff); }
+function escapeHtml(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function truncate(s, n) { s = s || ''; return s.length > n ? s.slice(0, n - 1) + '…' : s; }
+function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
+
+/* ---------- Storage helpers (global, unscoped by building) ---------- */
+async function loadJSON(key, fallback) {
+  try { const res = await window.storage.get(key, false); return res ? JSON.parse(res.value) : fallback; }
+  catch (e) { return fallback; }
+}
+async function saveJSON(key, value) { return window.storage.set(key, JSON.stringify(value), false); }
+
+/* ---------- Building profiles ---------- */
+let CURRENT_BUILDING = null; // { id, name }
+function nsKey(base) { return `bld:${CURRENT_BUILDING.id}:${base}`; }
+
+async function loadBuildings() { return loadJSON('buildings', []); }
+async function saveBuildings(list) { return saveJSON('buildings', list); }
+async function getActiveBuildingId() { return loadJSON('active-building', null); }
+async function setActiveBuildingId(id) { return saveJSON('active-building', id); }
+
+async function initApp() {
+  const buildings = await loadBuildings();
+  if (buildings.length === 0) {
+    document.getElementById('building-setup-gate').style.display = 'block';
+    document.getElementById('building-bar').style.display = 'none';
+    document.getElementById('main-tabs').style.display = 'none';
+    document.getElementById('main-content').style.display = 'none';
+    return;
+  }
+  let activeId = await getActiveBuildingId();
+  if (!activeId || !buildings.some(b => b.id === activeId)) activeId = buildings[0].id;
+  CURRENT_BUILDING = buildings.find(b => b.id === activeId);
+  await setActiveBuildingId(CURRENT_BUILDING.id);
+
+  document.getElementById('building-setup-gate').style.display = 'none';
+  document.getElementById('building-bar').style.display = 'flex';
+  document.getElementById('main-tabs').style.display = 'flex';
+  document.getElementById('main-content').style.display = 'block';
+
+  renderBuildingSelector(buildings);
+  document.getElementById('manager-name-input').value = (await loadJSON('manager-name', '')) || '';
+  document.getElementById('walk-date').value = todayStr();
+  document.getElementById('manual-photo-date').value = todayStr();
+  document.getElementById('approval-start').value = todayStr();
+  applyPreset('week');
+  await renderAll();
+}
+
+function renderBuildingSelector(buildings) {
+  const sel = document.getElementById('building-select');
+  sel.innerHTML = buildings.map(b => `<option value="${b.id}" ${b.id===CURRENT_BUILDING.id?'selected':''}>${escapeHtml(b.name)}</option>`).join('');
+}
+
+document.getElementById('building-select').addEventListener('change', async (e) => {
+  const buildings = await loadBuildings();
+  CURRENT_BUILDING = buildings.find(b => b.id === e.target.value);
+  await setActiveBuildingId(CURRENT_BUILDING.id);
+  await renderAll();
+});
+
+document.getElementById('manager-name-input').addEventListener('change', async (e) => {
+  await saveJSON('manager-name', e.target.value.trim());
+});
+
+document.getElementById('new-building-btn').addEventListener('click', async () => {
+  const name = prompt('New building name:');
+  if (!name || !name.trim()) return;
+  const buildings = await loadBuildings();
+  const id = 'b' + Date.now();
+  buildings.push({ id, name: name.trim() });
+  await saveBuildings(buildings);
+  CURRENT_BUILDING = { id, name: name.trim() };
+  await setActiveBuildingId(id);
+  renderBuildingSelector(buildings);
+  await renderAll();
+});
+
+document.getElementById('manage-buildings-btn').addEventListener('click', async () => {
+  const buildings = await loadBuildings();
+  const listing = buildings.map((b, i) => `${i + 1}. ${b.name}`).join('\n');
+  const input = prompt(`Buildings:\n${listing}\n\nTo rename, type: rename 1 New Name\nTo remove, type: delete 1\n(Deleting only hides it from this list — its logged data stays stored.)`);
+  if (!input) return;
+  const parts = input.trim().split(' ');
+  const action = parts[0].toLowerCase();
+  const idx = parseInt(parts[1], 10) - 1;
+  if (isNaN(idx) || idx < 0 || idx >= buildings.length) { alert('Enter a valid building number.'); return; }
+  if (action === 'rename') {
+    const newName = parts.slice(2).join(' ').trim();
+    if (!newName) { alert('Provide a new name after the number.'); return; }
+    buildings[idx].name = newName;
+    await saveBuildings(buildings);
+    if (buildings[idx].id === CURRENT_BUILDING.id) CURRENT_BUILDING = buildings[idx];
+    renderBuildingSelector(buildings);
+  } else if (action === 'delete') {
+    if (buildings.length === 1) { alert('You need at least one building.'); return; }
+    const removed = buildings.splice(idx, 1)[0];
+    await saveBuildings(buildings);
+    if (removed.id === CURRENT_BUILDING.id) {
+      CURRENT_BUILDING = buildings[0];
+      await setActiveBuildingId(CURRENT_BUILDING.id);
+    }
+    renderBuildingSelector(buildings);
+    await renderAll();
+  } else {
+    alert('Type "rename N Name" or "delete N".');
+  }
+});
+
+document.getElementById('create-first-building').addEventListener('click', async () => {
+  const name = document.getElementById('first-building-name').value.trim();
+  if (!name) { alert('Enter a building name first.'); return; }
+  const id = 'b' + Date.now();
+  await saveBuildings([{ id, name }]);
+  await setActiveBuildingId(id);
+  await initApp();
+});
+
+async function renderAll() {
+  await renderRegistry();
+  await renderContractors();
+  await renderApprovals();
+  await renderFollowups();
+}
 
 /* ---------- Tabs ---------- */
 document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -375,27 +577,20 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.classList.add('active');
     document.getElementById(btn.dataset.view).classList.add('active');
     if (btn.dataset.view === 'photos-view') renderPhotos();
+    if (btn.dataset.view === 'followups-view') renderFollowups();
   });
 });
 
-/* ---------- Storage helpers ---------- */
-async function loadJSON(key, fallback) {
-  try {
-    const res = await window.storage.get(key, false);
-    return res ? JSON.parse(res.value) : fallback;
-  } catch (e) { return fallback; }
-}
-async function saveJSON(key, value) {
-  return window.storage.set(key, JSON.stringify(value), false);
-}
+/* ---------- Building-scoped log storage ---------- */
 async function getAllLogs() {
-  const listRes = await window.storage.list('log:', false);
+  const prefix = nsKey('log:');
+  const listRes = await window.storage.list(prefix, false);
   const keys = listRes ? listRes.keys : [];
   const entries = [];
   for (const key of keys) {
     try {
       const res = await window.storage.get(key, false);
-      if (res) entries.push({ date: key.slice(4), plates: JSON.parse(res.value) });
+      if (res) entries.push({ date: key.slice(prefix.length), plates: JSON.parse(res.value) });
     } catch (e) { /* skip */ }
   }
   entries.sort((a, b) => a.date.localeCompare(b.date));
@@ -412,8 +607,7 @@ function activeApproval(plate, date, approvals) {
    Streak advances by the number of CALENDAR DAYS elapsed between two walks
    (not just +1 per walk). A Friday-to-Monday gap where the car is seen both
    times therefore adds 3 days automatically — the weekend counts as
-   consecutive days on site, so a car that's borderline on Friday can land
-   straight on an escalate/breach status the following Monday. */
+   consecutive days on site. */
 function computeRegistry(logs, contractors, approvals) {
   const state = {};
   const everSeen = new Set();
@@ -433,39 +627,17 @@ function computeRegistry(logs, contractors, approvals) {
       const wasPresentPrevWalk = !!(prev && prevWalkDate && prev.lastDate === prevWalkDate);
 
       if (excused) {
-        state[plate] = {
-          streak: 0,
-          origin: contractor ? 'contractor' : 'approved',
-          lastDate: date,
-          excused: true,
-          approvalEnd: appr ? appr.end : (prev ? prev.approvalEnd : undefined)
-        };
+        state[plate] = { streak: 0, origin: contractor ? 'contractor' : 'approved', lastDate: date, excused: true,
+          approvalEnd: appr ? appr.end : (prev ? prev.approvalEnd : undefined) };
       } else if (wasPresentPrevWalk && prev && !prev.excused) {
         const elapsed = daysBetween(prevWalkDate, date);
-        state[plate] = {
-          streak: prev.streak + elapsed,
-          origin: prev.origin === 'expired' ? 'expired' : 'normal',
-          lastDate: date,
-          excused: false,
-          approvalEnd: prev.approvalEnd
-        };
+        state[plate] = { streak: prev.streak + elapsed, origin: prev.origin === 'expired' ? 'expired' : 'normal',
+          lastDate: date, excused: false, approvalEnd: prev.approvalEnd };
       } else if (wasPresentPrevWalk && prev && prev.excused) {
         const cameFromApproval = prev.origin === 'approved';
-        state[plate] = {
-          streak: 1,
-          origin: cameFromApproval ? 'expired' : 'normal',
-          lastDate: date,
-          excused: false,
-          approvalEnd: prev.approvalEnd
-        };
+        state[plate] = { streak: 1, origin: cameFromApproval ? 'expired' : 'normal', lastDate: date, excused: false, approvalEnd: prev.approvalEnd };
       } else {
-        state[plate] = {
-          streak: 1,
-          origin: 'new',
-          lastDate: date,
-          excused: false,
-          approvalEnd: prev ? prev.approvalEnd : undefined
-        };
+        state[plate] = { streak: 1, origin: 'new', lastDate: date, excused: false, approvalEnd: prev ? prev.approvalEnd : undefined };
       }
     }
   }
@@ -485,39 +657,24 @@ function computeRegistry(logs, contractors, approvals) {
 
 function stageInfo(v) {
   if (v.excused) {
-    if (v.origin === 'contractor') {
-      return { tier: 'exempt', pill: 'pill-exempt', label: 'Contractor — exempt',
-        detail: 'On the exempt list. Monitored, but never notified.' };
-    }
-    return { tier: 'approved', pill: 'pill-approved', label: 'Approved parking',
-      detail: `Special approval active through ${v.approvalEnd}. No notice needed.` };
+    if (v.origin === 'contractor') return { tier: 'exempt', pill: 'pill-exempt', label: 'Contractor — exempt', detail: 'On the exempt list. Monitored, but never notified.' };
+    return { tier: 'approved', pill: 'pill-approved', label: 'Approved parking', detail: `Special approval active through ${v.approvalEnd}. No notice needed.` };
   }
   if (v.origin === 'expired') {
-    if (v.streak >= 3) {
-      return { tier: 'escalate', pill: 'pill-escalate', label: 'Escalate — Breach Notice',
-        detail: `Approval expired ${v.approvalEnd}; vehicle still on site ${v.streak} days after, despite the resident being asked to remove it. Pull CCTV, identify the resident, and issue an official breach notice.` };
-    }
-    if (v.streak === 2) {
-      return { tier: '2', pill: 'pill-2', label: '2nd Notice due',
-        detail: `Approval expired ${v.approvalEnd} and the vehicle is still on site 2 days later. The resident was already asked to remove it — place a formal notice.` };
-    }
+    if (v.streak >= 3) return { tier: 'escalate', pill: 'pill-escalate', label: 'Escalate — Breach Notice',
+      detail: `Approval expired ${v.approvalEnd}; vehicle still on site ${v.streak} days after, despite the resident being asked to remove it. Pull CCTV, identify the resident, and issue an official breach notice.` };
+    if (v.streak === 2) return { tier: '2', pill: 'pill-2', label: '2nd Notice due',
+      detail: `Approval expired ${v.approvalEnd} and the vehicle is still on site 2 days later. The resident was already asked to remove it — place a formal notice.` };
     return { tier: 'approval-flag', pill: 'pill-approval-flag', label: 'Approval Expired — Notify Resident',
       detail: `Approved until ${v.approvalEnd}. Still parked — flag the resident and ask them to remove the vehicle.` };
   }
-  if (v.streak >= ESCALATION_DAY) {
-    return { tier: 'escalate', pill: 'pill-escalate', label: 'Escalate — Breach Notice',
-      detail: `Parked ${v.streak} consecutive days. Pull CCTV, identify the resident, and issue an official breach notice.` };
-  }
-  if (v.streak === ESCALATION_DAY - 1) {
-    return { tier: '2', pill: 'pill-2', label: '2nd Notice due',
-      detail: `Parked ${v.streak} consecutive days. Place the second, consecutive-day notice.` };
-  }
-  if (v.streak === 2) {
-    return { tier: '1', pill: 'pill-1', label: '1st Notice due',
-      detail: 'Parked since yesterday. Place a notice for overstaying more than one day.' };
-  }
-  return { tier: 'new', pill: 'pill-new', label: 'New sighting',
-    detail: 'First time seen. No action needed yet — will flag tomorrow if still parked.' };
+  if (v.streak >= ESCALATION_DAY) return { tier: 'escalate', pill: 'pill-escalate', label: 'Escalate — Breach Notice',
+    detail: `Parked ${v.streak} consecutive days. Pull CCTV, identify the resident, and issue an official breach notice.` };
+  if (v.streak === ESCALATION_DAY - 1) return { tier: '2', pill: 'pill-2', label: '2nd Notice due',
+    detail: `Parked ${v.streak} consecutive days. Place the second, consecutive-day notice.` };
+  if (v.streak === 2) return { tier: '1', pill: 'pill-1', label: '1st Notice due',
+    detail: 'Parked since yesterday. Place a notice for overstaying more than one day.' };
+  return { tier: 'new', pill: 'pill-new', label: 'New sighting', detail: 'First time seen. No action needed yet — will flag tomorrow if still parked.' };
 }
 
 function showStatus(elId, kind, msg) {
@@ -526,7 +683,26 @@ function showStatus(elId, kind, msg) {
   el.className = `status-msg show ${kind}`;
 }
 
-/* ---------- Photo capture ---------- */
+/* ---------- Plate history preview ---------- */
+document.getElementById('rego-input').addEventListener('input', debounce(renderRegoPreview, 400));
+async function renderRegoPreview() {
+  const raw = document.getElementById('rego-input').value;
+  const plates = [...new Set(raw.split('\n').map(normalizePlate).filter(Boolean))];
+  const el = document.getElementById('rego-preview');
+  if (!plates.length) { el.innerHTML = ''; return; }
+  const logs = await getAllLogs();
+  el.innerHTML = plates.map(p => {
+    const dates = logs.filter(l => l.plates.includes(p)).map(l => l.date);
+    return `<div class="mini-row"><span class="plate-tag">${p}</span><span class="meta">${dates.length ? 'Previously parked: ' + dates.join(', ') : 'New plate — no history yet'}</span></div>`;
+  }).join('');
+}
+async function showPlateHistory(plate) {
+  const logs = await getAllLogs();
+  const dates = logs.filter(l => l.plates.includes(plate)).map(l => l.date);
+  alert(dates.length ? `${plate} — parked on:\n${dates.join('\n')}` : `${plate} has no recorded history yet.`);
+}
+
+/* ---------- Photo capture (general evidence photos) ---------- */
 let pendingPhotoTarget = null;
 
 function resizeImageFile(file, maxDim = 1000, quality = 0.72) {
@@ -564,7 +740,7 @@ document.getElementById('photo-file-input').addEventListener('change', async (e)
   try {
     const dataUrl = await resizeImageFile(file);
     const ts = Date.now();
-    const key = `photo:${date}:${plate}:${ts}`;
+    const key = nsKey(`photo:${date}:${plate}:${ts}`);
     await saveJSON(key, { dataUrl, plate, date, tier, note, timestamp: ts });
     showStatus('status-msg', 'ok', `Photo attached to ${plate}.`);
     showStatus('photos-status', 'ok', `Photo attached to ${plate}.`);
@@ -577,44 +753,176 @@ document.getElementById('photo-file-input').addEventListener('change', async (e)
 });
 
 async function getAllPhotos() {
-  const listRes = await window.storage.list('photo:', false);
+  const prefix = nsKey('photo:');
+  const listRes = await window.storage.list(prefix, false);
   const keys = listRes ? listRes.keys : [];
   const photos = [];
   for (const k of keys) {
-    try {
-      const res = await window.storage.get(k, false);
-      if (res) photos.push({ key: k, ...JSON.parse(res.value) });
-    } catch (e) { /* skip */ }
+    try { const res = await window.storage.get(k, false); if (res) photos.push({ key: k, ...JSON.parse(res.value) }); }
+    catch (e) { /* skip */ }
   }
   photos.sort((a, b) => b.timestamp - a.timestamp);
   return photos;
 }
-async function getPhotosForPlate(plate) {
-  return (await getAllPhotos()).filter(p => p.plate === plate);
+async function getPhotosForPlate(plate) { return (await getAllPhotos()).filter(p => p.plate === plate); }
+
+/* ---------- Follow-up cases (notice confirmation, notes, unit number, done photo) ---------- */
+async function getOrCreateFollowup(plate, tier, label, date) {
+  const key = nsKey('followup:' + plate);
+  const prior = await loadJSON(key, null);
+  let rec;
+  if (!prior || prior.status === 'done') {
+    rec = { plate, firstFlaggedDate: date, tier, label, status: 'pending', unit: prior ? prior.unit : '', notes: [], doneDate: null, donePhoto: null };
+  } else {
+    rec = prior; rec.tier = tier; rec.label = label;
+  }
+  await saveJSON(key, rec);
+  return rec;
+}
+async function markFollowupDone(plate, photo, note) {
+  const key = nsKey('followup:' + plate);
+  const rec = await loadJSON(key, null);
+  if (!rec) return;
+  if (note) rec.notes.push({ date: todayStr(), text: note });
+  rec.status = 'done'; rec.doneDate = todayStr(); rec.donePhoto = photo || rec.donePhoto;
+  await saveJSON(key, rec);
+}
+async function getAllFollowups() {
+  const prefix = nsKey('followup:');
+  const listRes = await window.storage.list(prefix, false);
+  const keys = listRes ? listRes.keys : [];
+  const out = [];
+  for (const k of keys) { const r = await loadJSON(k, null); if (r) out.push(r); }
+  return out;
+}
+
+let pendingFollowupDonePlate = null;
+let pendingFollowupNote = '';
+
+document.getElementById('followup-photo-input').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  e.target.value = '';
+  if (!file || !pendingFollowupDonePlate) return;
+  try {
+    const dataUrl = await resizeImageFile(file);
+    await markFollowupDone(pendingFollowupDonePlate, dataUrl, pendingFollowupNote);
+    await renderFollowups();
+  } catch (err) { alert('Could not process that photo.'); }
+  pendingFollowupDonePlate = null; pendingFollowupNote = '';
+});
+
+function followupCardHTML(r) {
+  const notesHtml = r.notes.length
+    ? r.notes.map(n => `<div class="note-line"><span class="note-date">${n.date}</span>${escapeHtml(n.text)}</div>`).join('')
+    : '<div class="empty" style="padding:2px 0;">No notes yet.</div>';
+  return `
+  <div class="followup-card ${r.status}" data-fu-plate="${r.plate}">
+    <div class="fu-head">
+      <span class="plate">${r.plate}</span>
+      <span class="fu-label">${r.label} — flagged ${r.firstFlaggedDate}</span>
+      <span class="pill ${r.status === 'done' ? 'pill-done' : 'pill-pending'}">${r.status === 'done' ? 'Actioned ' + r.doneDate : 'Pending'}</span>
+    </div>
+    <div class="fu-unit">
+      <label>Unit number (post-CCTV identification)</label>
+      <div class="row">
+        <div class="field"><input type="text" class="fu-unit-input" data-plate="${r.plate}" value="${escapeHtml(r.unit || '')}" placeholder="e.g. Unit 14"></div>
+        <button class="btn-mini fu-save-unit" data-plate="${r.plate}">Save Unit</button>
+      </div>
+    </div>
+    <div class="fu-notes">${notesHtml}</div>
+    ${r.donePhoto ? `<img class="fu-thumb" src="${r.donePhoto}">` : ''}
+    ${r.status === 'pending' ? `
+    <div class="fu-actions" style="margin-top:10px;">
+      <div class="field"><input type="text" class="fu-note-input" data-plate="${r.plate}" placeholder="Add a note..."></div>
+      <button class="btn-mini mini-green fu-yes" data-plate="${r.plate}">Yes — Actioned</button>
+      <button class="btn-mini mini-red fu-no" data-plate="${r.plate}">No — Add Note</button>
+    </div>` : ''}
+  </div>`;
+}
+
+async function renderFollowups() {
+  const records = await getAllFollowups();
+  records.sort((a, b) => (a.status === 'pending' ? 0 : 1) - (b.status === 'pending' ? 0 : 1) || a.plate.localeCompare(b.plate));
+  const pending = records.filter(r => r.status === 'pending');
+  const badge = document.getElementById('followups-badge');
+  if (pending.length) { badge.style.display = 'inline-block'; badge.textContent = pending.length; }
+  else badge.style.display = 'none';
+
+  const el = document.getElementById('followups-list');
+  if (records.length === 0) { el.innerHTML = '<div class="empty">No notices raised yet.</div>'; return; }
+  el.innerHTML = records.map(followupCardHTML).join('');
+
+  el.querySelectorAll('.fu-save-unit').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const plate = btn.dataset.plate;
+      const input = el.querySelector(`.fu-unit-input[data-plate="${CSS.escape(plate)}"]`);
+      const key = nsKey('followup:' + plate);
+      const rec = await loadJSON(key, null);
+      if (!rec) return;
+      rec.unit = input.value.trim();
+      await saveJSON(key, rec);
+      btn.textContent = 'Saved ✓';
+      setTimeout(() => { btn.textContent = 'Save Unit'; }, 1500);
+    });
+  });
+
+  el.querySelectorAll('.fu-yes').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const plate = btn.dataset.plate;
+      const card = btn.closest('.followup-card');
+      const noteInput = card.querySelector('.fu-note-input');
+      const noteText = noteInput ? noteInput.value.trim() : '';
+      const wantsPhoto = confirm('Attach a photo as proof this was actioned?\n\nOK = take/choose a photo\nCancel = mark done without a photo');
+      if (wantsPhoto) {
+        pendingFollowupDonePlate = plate;
+        pendingFollowupNote = noteText;
+        document.getElementById('followup-photo-input').click();
+      } else {
+        await markFollowupDone(plate, null, noteText);
+        await renderFollowups();
+      }
+    });
+  });
+
+  el.querySelectorAll('.fu-no').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const plate = btn.dataset.plate;
+      const card = btn.closest('.followup-card');
+      const noteInput = card.querySelector('.fu-note-input');
+      const text = noteInput.value.trim();
+      if (!text) { alert("Add a short note on why it's not done yet before saving."); return; }
+      const key = nsKey('followup:' + plate);
+      const rec = await loadJSON(key, null);
+      if (!rec) return;
+      rec.notes.push({ date: todayStr(), text });
+      await saveJSON(key, rec);
+      await renderFollowups();
+    });
+  });
 }
 
 /* ---------- Render: Walk view ---------- */
 async function renderRegistry() {
-  const [logs, contractors, approvals] = await Promise.all([
-    getAllLogs(), loadJSON('contractors', []), loadJSON('approvals', [])
-  ]);
+  const [logs, contractors, approvals] = await Promise.all([getAllLogs(), loadJSON(nsKey('contractors'), []), loadJSON(nsKey('approvals'), [])]);
   const { current, left } = computeRegistry(logs, contractors, approvals);
   const regTable = document.getElementById('registry-table');
 
   if (current.length === 0) {
     regTable.innerHTML = '<div class="empty">No vehicles currently on record. Log a walk to begin.</div>';
   } else {
-    let html = '<table><thead><tr><th>Plate</th><th>Days parked</th><th>Status</th></tr></thead><tbody>';
+    let html = '<table><thead><tr><th>Plate</th><th>Days parked</th><th>Status</th><th></th></tr></thead><tbody>';
     for (const v of current) {
       const info = stageInfo(v);
       html += `<tr>
         <td class="plate-cell">${v.plate}</td>
         <td>${v.excused ? '—' : dayLabel(v.streak)}</td>
         <td><span class="pill ${info.pill}">${info.label}</span></td>
+        <td><button class="btn-ghost hist-btn" data-plate="${v.plate}" style="padding:5px 9px;font-size:10px;">History</button></td>
       </tr>`;
     }
     html += '</tbody></table>';
     regTable.innerHTML = html;
+    regTable.querySelectorAll('.hist-btn').forEach(btn => btn.addEventListener('click', () => showPlateHistory(btn.dataset.plate)));
   }
 
   const historyList = document.getElementById('history-list');
@@ -634,7 +942,7 @@ async function renderRegistry() {
     historyList.querySelectorAll('[data-delete-date]').forEach(btn => {
       btn.addEventListener('click', async () => {
         if (confirm(`Delete the walk logged on ${btn.dataset.deleteDate}? This will recompute all streaks.`)) {
-          await window.storage.delete('log:' + btn.dataset.deleteDate, false);
+          await window.storage.delete(nsKey('log:' + btn.dataset.deleteDate), false);
           await renderRegistry();
           showStatus('status-msg', 'ok', `Deleted walk for ${btn.dataset.deleteDate}.`);
         }
@@ -666,7 +974,8 @@ function renderResults(current, left) {
       <div class="days">${v.excused ? '' : dayLabel(v.streak)}<b>${v.excused ? '—' : v.streak}</b></div>
       ${showPhotoBtn ? `<div class="ticket-actions">
         <button class="btn-mini" data-attach-photo="${v.plate}|${v.lastDate}|${info.tier}">📷 Attach Notice Photo</button>
-        <span class="photo-note" id="photo-count-${v.plate.replace(/\\s+/g,'_')}"></span>
+        <button class="btn-ghost" data-hist="${v.plate}" style="padding:7px 11px;font-size:10.5px;">History</button>
+        <span class="photo-note" id="photo-count-${v.plate.replace(/\s+/g,'_')}"></span>
       </div>` : ''}
     </div>`;
   }
@@ -686,6 +995,7 @@ function renderResults(current, left) {
     const [plate, date, tier] = btn.dataset.attachPhoto.split('|');
     btn.addEventListener('click', () => triggerAttachPhoto(plate, date, tier));
   });
+  list.querySelectorAll('[data-hist]').forEach(btn => btn.addEventListener('click', () => showPlateHistory(btn.dataset.hist)));
 
   (async () => {
     for (const v of sorted) {
@@ -706,26 +1016,28 @@ document.getElementById('submit-walk').addEventListener('click', async () => {
   const plates = [...new Set(raw.split('\n').map(normalizePlate).filter(p => p.length > 0))];
 
   try {
-    const existing = await window.storage.get('log:' + date, false).catch(() => null);
+    const existing = await window.storage.get(nsKey('log:' + date), false).catch(() => null);
     if (existing) {
       if (!confirm(`A walk for ${date} already exists (${JSON.parse(existing.value).length} plates). Overwrite it?`)) return;
     }
   } catch (e) { /* no existing entry */ }
 
   try {
-    const result = await window.storage.set('log:' + date, JSON.stringify(plates), false);
+    const result = await window.storage.set(nsKey('log:' + date), JSON.stringify(plates), false);
     if (!result) throw new Error('no result');
   } catch (e) {
     showStatus('status-msg', 'warn', 'Could not save this walk. Please try again.');
     return;
   }
 
-  const [logs, contractors, approvals] = await Promise.all([
-    getAllLogs(), loadJSON('contractors', []), loadJSON('approvals', [])
-  ]);
+  const [logs, contractors, approvals] = await Promise.all([getAllLogs(), loadJSON(nsKey('contractors'), []), loadJSON(nsKey('approvals'), [])]);
   const { current, left, latestDate } = computeRegistry(logs, contractors, approvals);
 
   if (latestDate === date) {
+    for (const v of current) {
+      const info = stageInfo(v);
+      if (NOTIFIABLE_TIERS.includes(info.tier)) await getOrCreateFollowup(v.plate, info.tier, info.label, date);
+    }
     renderResults(current, left.filter(v => v.lastSeen !== date));
   } else {
     document.getElementById('results-list').innerHTML =
@@ -735,25 +1047,27 @@ document.getElementById('submit-walk').addEventListener('click', async () => {
 
   showStatus('status-msg', 'ok', `Walk for ${date} saved — ${plates.length} vehicle${plates.length === 1 ? '' : 's'} logged.`);
   document.getElementById('rego-input').value = '';
+  document.getElementById('rego-preview').innerHTML = '';
   await renderRegistry();
+  await renderFollowups();
 });
 
 /* ---------- Render: Contractors view ---------- */
 async function renderContractors() {
-  const contractors = await loadJSON('contractors', []);
+  const contractors = await loadJSON(nsKey('contractors'), []);
   const el = document.getElementById('contractor-list');
   if (contractors.length === 0) { el.innerHTML = '<div class="empty">No contractors added yet.</div>'; return; }
   el.innerHTML = contractors.map(c => `
     <div class="mini-row">
       <span class="plate-tag">${c.plate}</span>
-      <span class="meta">${c.note || ''}</span>
+      <span class="meta">${escapeHtml(c.note || '')}</span>
       <button class="btn-danger" data-remove-contractor="${c.plate}">Remove</button>
     </div>`).join('');
   el.querySelectorAll('[data-remove-contractor]').forEach(btn => {
     btn.addEventListener('click', async () => {
       const plate = btn.dataset.removeContractor;
-      const list = (await loadJSON('contractors', [])).filter(c => c.plate !== plate);
-      await saveJSON('contractors', list);
+      const list = (await loadJSON(nsKey('contractors'), [])).filter(c => c.plate !== plate);
+      await saveJSON(nsKey('contractors'), list);
       await renderContractors();
       await renderRegistry();
     });
@@ -765,10 +1079,10 @@ document.getElementById('add-contractor').addEventListener('click', async () => 
   const noteEl = document.getElementById('contractor-note');
   const plate = normalizePlate(plateEl.value);
   if (!plate) { showStatus('contractor-status', 'warn', 'Enter a plate first.'); return; }
-  const list = await loadJSON('contractors', []);
+  const list = await loadJSON(nsKey('contractors'), []);
   if (list.some(c => c.plate === plate)) { showStatus('contractor-status', 'warn', `${plate} is already on the exempt list.`); return; }
   list.push({ plate, note: noteEl.value.trim() });
-  await saveJSON('contractors', list);
+  await saveJSON(nsKey('contractors'), list);
   plateEl.value = ''; noteEl.value = '';
   showStatus('contractor-status', 'ok', `${plate} added to the exempt list.`);
   await renderContractors();
@@ -784,7 +1098,7 @@ function approvalStatusLabel(a) {
 }
 
 async function renderApprovals() {
-  const approvals = await loadJSON('approvals', []);
+  const approvals = await loadJSON(nsKey('approvals'), []);
   const el = document.getElementById('approval-list');
   if (approvals.length === 0) { el.innerHTML = '<div class="empty">No approvals added yet.</div>'; return; }
   const sorted = [...approvals].sort((a, b) => b.end.localeCompare(a.end));
@@ -793,15 +1107,15 @@ async function renderApprovals() {
     return `
     <div class="mini-row">
       <span class="plate-tag">${a.plate}</span>
-      <span class="meta">${a.start} → ${a.end} · <span style="color:${st.color};">${st.text}</span>${a.note ? ' · ' + a.note : ''}</span>
+      <span class="meta">${a.start} → ${a.end} · <span style="color:${st.color};">${st.text}</span>${a.note ? ' · ' + escapeHtml(a.note) : ''}</span>
       <button class="btn-danger" data-remove-approval="${a.plate}|${a.start}|${a.end}">Remove</button>
     </div>`;
   }).join('');
   el.querySelectorAll('[data-remove-approval]').forEach(btn => {
     btn.addEventListener('click', async () => {
       const [plate, start, end] = btn.dataset.removeApproval.split('|');
-      const list = (await loadJSON('approvals', [])).filter(a => !(a.plate === plate && a.start === start && a.end === end));
-      await saveJSON('approvals', list);
+      const list = (await loadJSON(nsKey('approvals'), [])).filter(a => !(a.plate === plate && a.start === start && a.end === end));
+      await saveJSON(nsKey('approvals'), list);
       await renderApprovals();
       await renderRegistry();
     });
@@ -819,10 +1133,10 @@ document.getElementById('add-approval').addEventListener('click', async () => {
   if (!plate) { showStatus('approval-status', 'warn', 'Enter a plate first.'); return; }
   if (!start || !end) { showStatus('approval-status', 'warn', 'Pick both a start and end date.'); return; }
   if (end < start) { showStatus('approval-status', 'warn', 'End date must be on or after the start date.'); return; }
-  const list = await loadJSON('approvals', []);
+  const list = await loadJSON(nsKey('approvals'), []);
   list.push({ plate, start, end, note: noteEl.value.trim() });
-  await saveJSON('approvals', list);
-  plateEl.value = ''; noteEl.value = ''; startEl.value = ''; endEl.value = '';
+  await saveJSON(nsKey('approvals'), list);
+  plateEl.value = ''; noteEl.value = ''; endEl.value = '';
   showStatus('approval-status', 'ok', `Approval granted for ${plate} (${start} → ${end}).`);
   await renderApprovals();
   await renderRegistry();
@@ -841,7 +1155,7 @@ async function renderPhotos() {
     for (const p of byPlate[plate]) {
       html += `<div class="photo-card">
         <img class="photo-thumb" src="${p.dataUrl}">
-        <div class="meta">${p.date}${p.note ? '<br>' + p.note : ''}</div>
+        <div class="meta">${p.date}${p.note ? '<br>' + escapeHtml(p.note) : ''}</div>
         <button class="btn-danger" data-remove-photo="${p.key}">Remove</button>
       </div>`;
     }
@@ -867,8 +1181,8 @@ document.getElementById('manual-photo-btn').addEventListener('click', () => {
 
 /* ---------- Event history (for reports) ----------
    Replays the registry day by day and records every time a plate's status
-   tier changes, so weekly/monthly reports count each notice exactly once
-   (the day it was first triggered) rather than once per walk it persists. */
+   tier changes, so reports count each notice exactly once (the day it was
+   first triggered) rather than once per walk it persists. */
 function buildEventHistory(logs, contractors, approvals) {
   const events = [];
   const prevTier = {};
@@ -887,122 +1201,41 @@ function buildEventHistory(logs, contractors, approvals) {
   return events;
 }
 
-/* ---------- PDF: Weekly report ---------- */
-document.getElementById('generate-weekly').addEventListener('click', async () => {
-  if (!window.jspdf) { showStatus('weekly-status', 'warn', 'PDF library failed to load — check your internet connection and try again.'); return; }
-  const anchor = document.getElementById('weekly-anchor').value || todayStr();
-  const monday = mondayOf(anchor);
-  const sunday = addDays(monday, 6);
+/* ---------- Report range presets ---------- */
+function presetRange(type) {
+  const today = todayStr();
+  if (type === 'week') { const mon = mondayOf(today); return { start: mon, end: addDays(mon, 6) }; }
+  if (type === 'month') { const [y, m] = today.split('-'); const start = `${y}-${m}-01`; const end = new Date(Date.UTC(+y, +m, 0)).toISOString().slice(0, 10); return { start, end }; }
+  if (type === 'quarter') { const [y, m] = today.split('-').map(Number); const q = Math.floor((m - 1) / 3); const startMonth = q * 3 + 1; const start = `${y}-${String(startMonth).padStart(2, '0')}-01`; const end = new Date(Date.UTC(y, startMonth + 2, 0)).toISOString().slice(0, 10); return { start, end }; }
+  if (type === 'year') { const y = today.slice(0, 4); return { start: `${y}-01-01`, end: `${y}-12-31` }; }
+}
+function applyPreset(type) {
+  const r = presetRange(type);
+  document.getElementById('report-start').value = r.start;
+  document.getElementById('report-end').value = r.end;
+  document.querySelectorAll('#range-presets button').forEach(b => b.classList.toggle('active', b.dataset.preset === type));
+  updatePreview();
+}
+document.querySelectorAll('#range-presets button').forEach(b => b.addEventListener('click', () => applyPreset(b.dataset.preset)));
+document.getElementById('report-start').addEventListener('change', () => { document.querySelectorAll('#range-presets button').forEach(b => b.classList.remove('active')); updatePreview(); });
+document.getElementById('report-end').addEventListener('change', () => { document.querySelectorAll('#range-presets button').forEach(b => b.classList.remove('active')); updatePreview(); });
 
-  const [logs, contractors, approvals, allPhotos] = await Promise.all([
-    getAllLogs(), loadJSON('contractors', []), loadJSON('approvals', []), getAllPhotos()
+async function gatherReportData(start, end) {
+  const [logs, contractors, approvals, followups] = await Promise.all([
+    getAllLogs(), loadJSON(nsKey('contractors'), []), loadJSON(nsKey('approvals'), []), getAllFollowups()
   ]);
-  if (logs.length === 0) { showStatus('weekly-status', 'warn', 'No walks logged yet.'); return; }
+  const rangeLogs = logs.filter(l => l.date >= start && l.date <= end);
+  const events = buildEventHistory(logs, contractors, approvals).filter(e => e.date >= start && e.date <= end);
+  const notice1 = events.filter(e => e.tier === '1');
+  const notice2 = events.filter(e => e.tier === '2');
+  const approvalFlags = events.filter(e => e.tier === 'approval-flag');
+  const escalated = events.filter(e => e.tier === 'escalate');
 
-  const events = buildEventHistory(logs, contractors, approvals);
-  const weekEvents = events.filter(e => e.date >= monday && e.date <= sunday);
-  const notice1 = weekEvents.filter(e => e.tier === '1');
-  const notice2 = weekEvents.filter(e => e.tier === '2');
-  const approvalFlags = weekEvents.filter(e => e.tier === 'approval-flag');
-  const escalated = weekEvents.filter(e => e.tier === 'escalate');
-
-  const uptoSunday = logs.filter(l => l.date <= sunday);
-  const { current } = computeRegistry(uptoSunday, contractors, approvals);
-
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-  let y = 20;
-  const ensure = (needed) => { if (y + needed > 285) { doc.addPage(); y = 20; } };
-
-  doc.setFont('helvetica', 'bold'); doc.setFontSize(18);
-  doc.text('Lot Watch — Weekly Patrol Report', 14, y); y += 8;
-  doc.setFont('helvetica', 'normal'); doc.setFontSize(11);
-  doc.text(`Week: ${monday} to ${sunday}`, 14, y); y += 6;
-  doc.text(`Generated: ${todayStr()}`, 14, y); y += 10;
-
-  doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.text('Summary', 14, y); y += 7;
-  doc.setFont('helvetica', 'normal'); doc.setFontSize(11);
-  [
-    `1st notices issued: ${notice1.length}`,
-    `2nd notices issued: ${notice2.length}`,
-    `Approval-expiry flags raised: ${approvalFlags.length}`,
-    `Vehicles escalated to breach notice: ${escalated.length}`,
-    `Vehicles still on site at week's end: ${current.filter(v => !v.excused).length}`,
-  ].forEach(l => { doc.text(l, 14, y); y += 6; });
-  y += 4;
-
-  if (escalated.length) {
-    ensure(14 + escalated.length * 6);
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.text('Vehicles Bridged (Breach Notice Issued)', 14, y); y += 7;
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(11);
-    for (const e of escalated) {
-      ensure(6);
-      doc.text(`${e.plate} — breached on ${e.date} (day ${e.streak})`, 14, y); y += 6;
-    }
-    y += 4;
-  }
-
-  ensure(20);
-  doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.text('Registry Snapshot — End of Week', 14, y); y += 7;
-  doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
-  doc.text('Plate', 14, y); doc.text('Days Parked', 70, y); doc.text('Status', 120, y); y += 5;
-  doc.setLineWidth(0.2); doc.line(14, y, 196, y); y += 4;
-  for (const v of current) {
-    ensure(6);
-    const info = stageInfo(v);
-    doc.text(v.plate, 14, y);
-    doc.text(v.excused ? '—' : String(v.streak), 70, y);
-    doc.text(info.label, 120, y);
-    y += 6;
-  }
-  y += 6;
-
-  const escalatedPlates = [...new Set(escalated.map(e => e.plate))];
-  if (escalatedPlates.length) {
-    ensure(16);
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.text('Evidence Photos', 14, y); y += 8;
-    for (const plate of escalatedPlates) {
-      const photos = allPhotos.filter(p => p.plate === plate && p.date >= monday && p.date <= sunday);
-      if (!photos.length) continue;
-      ensure(50);
-      doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.text(plate, 14, y); y += 6;
-      let x = 14;
-      for (const p of photos.slice(0, 4)) {
-        try { doc.addImage(p.dataUrl, 'JPEG', x, y, 40, 40); } catch (e) { /* skip bad image */ }
-        x += 45;
-      }
-      y += 46;
-    }
-  }
-
-  doc.save(`LotWatch-Weekly-${monday}-to-${sunday}.pdf`);
-  showStatus('weekly-status', 'ok', `Weekly report generated for ${monday} – ${sunday}.`);
-});
-
-/* ---------- PDF: Monthly report ---------- */
-document.getElementById('generate-monthly').addEventListener('click', async () => {
-  if (!window.jspdf) { showStatus('monthly-status', 'warn', 'PDF library failed to load — check your internet connection and try again.'); return; }
-  const monthVal = document.getElementById('monthly-anchor').value;
-  if (!monthVal) { showStatus('monthly-status', 'warn', 'Pick a month first.'); return; }
-  const monthStart = monthVal + '-01';
-  const d = new Date(monthStart + 'T00:00:00Z');
-  const monthEnd = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).toISOString().slice(0, 10);
-
-  const [logs, contractors, approvals] = await Promise.all([
-    getAllLogs(), loadJSON('contractors', []), loadJSON('approvals', [])
-  ]);
-  const monthLogs = logs.filter(l => l.date >= monthStart && l.date <= monthEnd);
-  if (monthLogs.length === 0) { showStatus('monthly-status', 'warn', 'No walks logged in that month.'); return; }
-
-  const events = buildEventHistory(logs, contractors, approvals);
-  const monthEvents = events.filter(e => e.date >= monthStart && e.date <= monthEnd);
-  const notice1 = monthEvents.filter(e => e.tier === '1');
-  const notice2 = monthEvents.filter(e => e.tier === '2');
-  const approvalFlags = monthEvents.filter(e => e.tier === 'approval-flag');
-  const escalated = monthEvents.filter(e => e.tier === 'escalate');
+  const uptoEnd = logs.filter(l => l.date <= end);
+  const { current } = computeRegistry(uptoEnd, contractors, approvals);
 
   const platePresence = {};
-  for (const entry of monthLogs) {
+  for (const entry of rangeLogs) {
     for (const plate of entry.plates) {
       if (isContractor(plate, contractors)) continue;
       if (activeApproval(plate, entry.date, approvals)) continue;
@@ -1014,71 +1247,254 @@ document.getElementById('generate-monthly').addEventListener('click', async () =
     const dates = [...new Set(platePresence[plate])].sort();
     if (dates.length < OCCASIONAL_MIN_DAYS) continue;
     let maxRun = 1, run = 1;
-    for (let i = 1; i < dates.length; i++) {
-      if (daysBetween(dates[i-1], dates[i]) === 1) { run += 1; maxRun = Math.max(maxRun, run); }
-      else run = 1;
-    }
+    for (let i = 1; i < dates.length; i++) { if (daysBetween(dates[i - 1], dates[i]) === 1) { run += 1; maxRun = Math.max(maxRun, run); } else run = 1; }
     if (maxRun < ESCALATION_DAY) occasional.push({ plate, totalDays: dates.length, dates, maxRun });
   }
   occasional.sort((a, b) => b.totalDays - a.totalDays);
 
+  const approvedPlates = [...new Set(approvals.filter(a => !(a.end < start || a.start > end)).map(a => a.plate))];
+
+  const relevantFollowups = followups.filter(f =>
+    (f.firstFlaggedDate >= start && f.firstFlaggedDate <= end) ||
+    f.notes.some(n => n.date >= start && n.date <= end) ||
+    (f.doneDate && f.doneDate >= start && f.doneDate <= end)
+  );
+
+  return { start, end, logs: rangeLogs, notice1, notice2, approvalFlags, escalated, current, occasional, approvedPlates, followups: relevantFollowups };
+}
+
+async function updatePreview() {
+  const start = document.getElementById('report-start').value;
+  const end = document.getElementById('report-end').value;
+  if (!start || !end) return;
+  const data = await gatherReportData(start, end);
+  document.getElementById('report-preview').innerHTML = `
+    <div class="preview-grid">
+      <div class="preview-stat"><b>${data.logs.length}</b><span>Walks logged</span></div>
+      <div class="preview-stat"><b>${data.notice1.length}</b><span>1st notices</span></div>
+      <div class="preview-stat"><b>${data.notice2.length}</b><span>2nd notices</span></div>
+      <div class="preview-stat"><b>${data.escalated.length}</b><span>Breach notices</span></div>
+      <div class="preview-stat"><b>${data.occasional.length}</b><span>Occasional parkers</span></div>
+      <div class="preview-stat"><b>${data.approvedPlates.length}</b><span>Approved vehicles</span></div>
+    </div>`;
+}
+
+/* ---------- PDF table drawing helpers ---------- */
+function drawTableHeader(doc, x, y, colWidths, headers) {
+  doc.setFillColor(28, 30, 34);
+  doc.rect(x, y, colWidths.reduce((a, b) => a + b, 0), 7, 'F');
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(232, 163, 61);
+  let cx = x;
+  headers.forEach((h, i) => { doc.text(h, cx + 2, y + 5); cx += colWidths[i]; });
+  doc.setTextColor(0, 0, 0);
+  return y + 7;
+}
+function drawTableRow(doc, x, y, colWidths, cells, shaded) {
+  const rowH = 8;
+  const totalW = colWidths.reduce((a, b) => a + b, 0);
+  if (shaded) { doc.setFillColor(246, 244, 238); doc.rect(x, y, totalW, rowH, 'F'); }
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(30, 30, 30);
+  let cx = x;
+  cells.forEach((c, i) => { doc.text(String(c), cx + 2, y + 5.5, { maxWidth: colWidths[i] - 3 }); cx += colWidths[i]; });
+  doc.setDrawColor(210, 210, 210); doc.rect(x, y, totalW, rowH);
+  return y + rowH;
+}
+function drawBreachTable(doc, x, y, rows, ensure) {
+  const colWidths = [24, 22, 20, 30, 62, 18];
+  const headers = ['Plate', 'Flagged', 'Unit', 'Status', 'Latest Note', 'Photo'];
+  y = drawTableHeader(doc, x, y, colWidths, headers);
+  rows.forEach((r, idx) => {
+    const rowH = 16;
+    y = ensure(y, rowH);
+    if (idx % 2 === 1) { doc.setFillColor(246, 244, 238); doc.rect(x, y, colWidths.reduce((a, b) => a + b, 0), rowH, 'F'); }
+    let cx = x;
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(30, 30, 30);
+    doc.text(r.plate, cx + 2, y + 6); cx += colWidths[0];
+    doc.text(r.dateFlagged, cx + 2, y + 6); cx += colWidths[1];
+    doc.text(r.unit || '—', cx + 2, y + 6, { maxWidth: colWidths[2] - 3 }); cx += colWidths[2];
+    doc.text(r.status, cx + 2, y + 6, { maxWidth: colWidths[3] - 3 }); cx += colWidths[3];
+    doc.text(truncate(r.note, 44) || '—', cx + 2, y + 6, { maxWidth: colWidths[4] - 3 }); cx += colWidths[4];
+    if (r.photo) { try { doc.addImage(r.photo, 'JPEG', cx + 2, y + 1, 14, 14); } catch (e) { /* skip */ } }
+    cx += colWidths[5];
+    doc.setDrawColor(210, 210, 210); doc.rect(x, y, colWidths.reduce((a, b) => a + b, 0), rowH);
+    y += rowH;
+  });
+  return y;
+}
+
+async function buildReportPdf(start, end) {
+  const data = await gatherReportData(start, end);
+  const managerName = (await loadJSON('manager-name', '')) || '';
+  const buildingName = CURRENT_BUILDING ? CURRENT_BUILDING.name : '';
+
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
-  let y = 20;
-  const ensure = (needed) => { if (y + needed > 285) { doc.addPage(); y = 20; } };
+  const pageW = 210;
+  let y;
 
-  doc.setFont('helvetica', 'bold'); doc.setFontSize(18);
-  doc.text('Lot Watch — Monthly Patrol Report', 14, y); y += 8;
-  doc.setFont('helvetica', 'normal'); doc.setFontSize(11);
-  doc.text(`Month: ${monthVal} (${monthStart} to ${monthEnd})`, 14, y); y += 6;
-  doc.text(`Generated: ${todayStr()}`, 14, y); y += 10;
-
-  doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.text('Summary', 14, y); y += 7;
-  doc.setFont('helvetica', 'normal'); doc.setFontSize(11);
-  [
-    `1st notices issued: ${notice1.length}`,
-    `2nd notices issued: ${notice2.length}`,
-    `Approval-expiry flags raised: ${approvalFlags.length}`,
-    `Vehicles escalated to breach notice: ${escalated.length}`,
-    `Occasional parkers flagged for review: ${occasional.length}`,
-  ].forEach(l => { doc.text(l, 14, y); y += 6; });
-  y += 4;
-
-  if (escalated.length) {
-    ensure(14 + escalated.length * 6);
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.text('Vehicles Bridged This Month', 14, y); y += 7;
+  const drawHeader = () => {
+    doc.setFillColor(28, 30, 34);
+    doc.rect(0, 0, pageW, 32, 'F');
+    doc.setTextColor(232, 163, 61);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(22);
+    doc.text('LOT WATCH', 14, 16);
+    doc.setTextColor(255, 255, 255);
     doc.setFont('helvetica', 'normal'); doc.setFontSize(11);
-    for (const e of escalated) {
-      ensure(6);
-      doc.text(`${e.plate} — breached on ${e.date} (day ${e.streak})`, 14, y); y += 6;
-    }
-    y += 4;
+    doc.text(`Patrol Report — ${start} to ${end}`, 14, 24);
+    if (buildingName) { doc.setFontSize(9); doc.text(buildingName, 14, 29.5, { maxWidth: 130 }); }
+    doc.setFontSize(8); doc.setTextColor(200, 200, 200);
+    doc.text(`Generated ${todayStr()}${managerName ? ' by ' + managerName : ''}`, pageW - 14, 29, { align: 'right' });
+    doc.setTextColor(0, 0, 0);
+    return 42;
+  };
+  y = drawHeader();
+
+  const ensure = (curY, needed) => { if (curY + needed > 285) { doc.addPage(); return drawHeader(); } return curY; };
+
+  // Summary overview
+  y = ensure(y, 40);
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.setTextColor(28, 30, 34);
+  doc.text('Summary Overview', 14, y); y += 3;
+  doc.setDrawColor(232, 163, 61); doc.setLineWidth(0.6); doc.line(14, y, 60, y); y += 8;
+
+  const stats = [
+    ['Walks logged', data.logs.length],
+    ['1st notices issued', data.notice1.length],
+    ['2nd notices issued', data.notice2.length],
+    ['Approval-expiry flags', data.approvalFlags.length],
+    ['Breach notices (bridged)', data.escalated.length],
+    ['Occasional parkers flagged', data.occasional.length],
+    ['Approved vehicles (range)', data.approvedPlates.length],
+    ['Vehicles on site at end', data.current.filter(v => !v.excused).length],
+  ];
+  const boxW = 44, boxH = 20, gap = 4;
+  let bx = 14, by = y;
+  stats.forEach((s, i) => {
+    if (i > 0 && i % 4 === 0) { bx = 14; by += boxH + gap; }
+    by = ensure(by, boxH + gap);
+    doc.setFillColor(246, 244, 238); doc.setDrawColor(210, 205, 195);
+    doc.rect(bx, by, boxW, boxH, 'FD');
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(16); doc.setTextColor(28, 30, 34);
+    doc.text(String(s[1]), bx + 4, by + 11);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.setTextColor(90, 90, 90);
+    doc.text(String(s[0]), bx + 4, by + 16, { maxWidth: boxW - 6 });
+    bx += boxW + gap;
+  });
+  y = by + boxH + 12;
+
+  // Breach / bridged table
+  y = ensure(y, 20);
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.setTextColor(28, 30, 34);
+  doc.text('Vehicles Bridged — Breach Notices', 14, y); y += 3;
+  doc.setDrawColor(192, 67, 47); doc.line(14, y, 60, y); y += 8;
+  const escalatedPlates = [...new Set(data.escalated.map(e => e.plate))];
+  if (escalatedPlates.length === 0) {
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(10); doc.setTextColor(90, 90, 90);
+    doc.text('No vehicles reached breach status in this range.', 14, y); y += 10;
+  } else {
+    const rows = escalatedPlates.map(plate => {
+      const ev = data.escalated.find(e => e.plate === plate);
+      const fu = data.followups.find(f => f.plate === plate);
+      const lastNote = fu && fu.notes.length ? fu.notes[fu.notes.length - 1].text : '';
+      const photo = fu ? fu.donePhoto : null;
+      return { plate, dateFlagged: ev.date, unit: fu ? fu.unit : '', status: fu ? (fu.status === 'done' ? 'Actioned ' + fu.doneDate : 'Pending') : 'Pending', note: lastNote, photo };
+    });
+    y = drawBreachTable(doc, 14, y, rows, ensure);
+    y += 8;
   }
 
-  if (occasional.length) {
-    ensure(20);
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.text('Occasional Parkers — Flagged for Review', 14, y); y += 7;
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
-    doc.text('Never stayed long enough to trigger a notice, but returned repeatedly through the month.', 14, y, { maxWidth: 180 }); y += 10;
-    for (const o of occasional) {
-      ensure(14);
-      doc.setFont('helvetica', 'bold'); doc.text(`${o.plate} — parked ${o.totalDays} day(s) this month (non-consecutive)`, 14, y); y += 5;
-      doc.setFont('helvetica', 'normal');
-      doc.text(`Dates: ${o.dates.join(', ')}`, 14, y, { maxWidth: 180 }); y += 8;
+  // Notices table
+  y = ensure(y, 20);
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.setTextColor(28, 30, 34);
+  doc.text('Notices Issued', 14, y); y += 3;
+  doc.setDrawColor(201, 127, 26); doc.line(14, y, 60, y); y += 8;
+  const allNotices = [
+    ...data.notice1.map(e => ({ ...e, kind: '1st Notice' })),
+    ...data.notice2.map(e => ({ ...e, kind: '2nd Notice' })),
+    ...data.approvalFlags.map(e => ({ ...e, kind: 'Approval Expired' })),
+  ].sort((a, b) => a.date.localeCompare(b.date));
+  if (allNotices.length === 0) {
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(10); doc.setTextColor(90, 90, 90);
+    doc.text('No notices issued in this range.', 14, y); y += 10;
+  } else {
+    y = drawTableHeader(doc, 14, y, [30, 50, 100], ['Plate', 'Type', 'Date']);
+    allNotices.forEach((n, i) => { y = ensure(y, 8); y = drawTableRow(doc, 14, y, [30, 50, 100], [n.plate, n.kind, n.date], i % 2 === 1); });
+    y += 8;
+  }
+
+  // Occasional parkers
+  y = ensure(y, 24);
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.setTextColor(28, 30, 34);
+  doc.text('Occasional / Frequent — Not Consecutive', 14, y); y += 3;
+  doc.setDrawColor(76, 134, 176); doc.line(14, y, 60, y); y += 6;
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(90, 90, 90);
+  doc.text('Never stayed long enough to trigger a notice, but returned repeatedly through the range.', 14, y, { maxWidth: 180 }); y += 8;
+  if (data.occasional.length === 0) {
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(10); doc.setTextColor(90, 90, 90);
+    doc.text('No occasional parkers flagged in this range.', 14, y); y += 10;
+  } else {
+    y = drawTableHeader(doc, 14, y, [26, 22, 28, 104], ['Plate', 'Days', 'Longest Run', 'Dates']);
+    data.occasional.forEach((o, i) => {
+      const datesDisplay = o.dates.length > 6 ? o.dates.slice(0, 6).join(', ') + ` +${o.dates.length - 6} more` : o.dates.join(', ');
+      y = ensure(y, 8);
+      y = drawTableRow(doc, 14, y, [26, 22, 28, 104], [o.plate, o.totalDays, o.maxRun + 'd', datesDisplay], i % 2 === 1);
+    });
+    y += 8;
+  }
+
+  // Approved vehicles
+  y = ensure(y, 16);
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.setTextColor(28, 30, 34);
+  doc.text('Approved Vehicles (Range)', 14, y); y += 3;
+  doc.setDrawColor(61, 122, 156); doc.line(14, y, 60, y); y += 8;
+  if (data.approvedPlates.length === 0) {
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(10); doc.setTextColor(90, 90, 90);
+    doc.text('No special approvals active in this range.', 14, y); y += 10;
+  } else {
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(10); doc.setTextColor(30, 30, 30);
+    doc.text(data.approvedPlates.join(', '), 14, y, { maxWidth: 180 }); y += 10;
+  }
+
+  // Follow-up notes & photos
+  if (data.followups.length) {
+    y = ensure(y, 16);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.setTextColor(28, 30, 34);
+    doc.text('Follow-Up Notes & Evidence Photos', 14, y); y += 3;
+    doc.setDrawColor(122, 31, 20); doc.line(14, y, 60, y); y += 8;
+    for (const fu of data.followups) {
+      y = ensure(y, 24);
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5); doc.setTextColor(28, 30, 34);
+      doc.text(`${fu.plate}${fu.unit ? '  ·  Unit ' + fu.unit : ''}  ·  ${fu.status === 'done' ? 'Actioned ' + fu.doneDate : 'Pending'}`, 14, y); y += 6;
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(70, 70, 70);
+      if (fu.notes.length) { for (const n of fu.notes) { y = ensure(y, 5); doc.text(`${n.date} — ${truncate(n.text, 90)}`, 18, y, { maxWidth: 170 }); y += 5; } }
+      else { doc.text('No notes recorded.', 18, y); y += 5; }
+      if (fu.donePhoto) { y = ensure(y, 38); try { doc.addImage(fu.donePhoto, 'JPEG', 18, y, 34, 34); } catch (e) { /* skip */ } y += 38; }
+      else y += 4;
     }
   }
 
-  doc.save(`LotWatch-Monthly-${monthVal}.pdf`);
-  showStatus('monthly-status', 'ok', `Monthly report generated for ${monthVal}.`);
+  // Footer note
+  y = ensure(y, 16);
+  doc.setFont('helvetica', 'italic'); doc.setFontSize(8); doc.setTextColor(120, 120, 120);
+  doc.text('Streaks count elapsed calendar days, not just walk visits — a car seen Friday and still present Monday is treated as continuously parked over the weekend.', 14, y, { maxWidth: 182 });
+
+  doc.save(`LotWatch-${buildingName ? buildingName.replace(/\s+/g,'_') + '-' : ''}${start}-to-${end}.pdf`);
+}
+
+document.getElementById('generate-report').addEventListener('click', async () => {
+  if (!window.jspdf) { showStatus('report-status', 'warn', 'PDF library failed to load — check your internet connection and try again.'); return; }
+  const start = document.getElementById('report-start').value;
+  const end = document.getElementById('report-end').value;
+  if (!start || !end) { showStatus('report-status', 'warn', 'Pick a start and end date first.'); return; }
+  if (end < start) { showStatus('report-status', 'warn', 'End date must be on or after the start date.'); return; }
+  const logs = await getAllLogs();
+  if (logs.length === 0) { showStatus('report-status', 'warn', 'No walks logged yet.'); return; }
+  await buildReportPdf(start, end);
+  showStatus('report-status', 'ok', `Report generated for ${start} – ${end}.`);
 });
 
 /* ---------- Init ---------- */
-document.getElementById('walk-date').value = todayStr();
-document.getElementById('weekly-anchor').value = todayStr();
-document.getElementById('monthly-anchor').value = todayStr().slice(0,7);
-renderRegistry();
-renderContractors();
-renderApprovals();
+initApp();
 </script>
 </body>
 </html>
